@@ -1,0 +1,33 @@
+The goal of my website is to give users a simplified interface to navigate information about US National Parks. The current UI for the National Park System (NPS) can be overwhelming with notifications and difficult to navigate due to large headers that force users to scroll to recognize a page change. Another challenge of navigating the current NPS site is that each page has the same structure and color scheme so it can be challenging to differentiate between different pages and parks. The streamlined UI will alleviate some of these concerns and allow users easier access to vital park information before visiting the NPS site for additional details, such as reservations, and a quick way to see notifications and park details.
+The seconds goal of my website is to give users a place to keep track of notes and pictures from the trips that they take. Rather than be a social networking-esque site where you share these with others, it will be an individual resource that you could use for historical tracking or for presenting to others from a user's device. The ability to keep a journal of national park journeys will allow users to track where they have been, changes to the same park they have visited, and notes from their trips.
+
+The demographic of users for my site will be National Park explorers, general outdoor enthusiasts looking for quick access to National Park information, and anyone looking to access information about nearby National Parks. The journaling portion of the site will be geared toward those who frequent the national parks looking for a convenient way to keep track of their trips.
+I plan on using the NPS API which will allow me to access general information about each National Park, including location, activities at the park, announcements for the park, and guides/maps for a particular park. I will work to implement a way to integrate the API park names with user submitted journals to keep track of their visits and allow users to easily track which parks they have visited and what they liked or disliked.
+
+Outline of Project
+a. What does your database schema look like? 
+I will have a user table with basic user information for those looking to use the journaling based resources on the site. This will collect their name, username, password, email, and an optional general location for them to see parks in their geographic location first on their dashboard.
+I will have a journal submission table that will have a title, a date range for the visit, a content area, picture upload or URL, a user id, and a park id (this park id will come directly from the API or will save a list of National Parks to use as reference as additions/subtractions do not occur often. This table will ideally associate the API call with the journal submissions so that when users search for a national park they can see if they have visited that park with a link to their journal submission)
+
+b. What kinds of issues might you run into with your API? 
+	The main issue that I am concerned about is outdated information from the API for announcements. A majority of information that is needed for the site will not change often (ex. Park names, park addresses, park maps). However announcements for individual, or all, parks can change frequently and I am not sure how up-to-date they will be. I am also not sure how often the API has maintenance, so if something is not working it is unknown how long until it would get patched.
+
+c. Is there any sensitive information you need to secure? 
+	I will need to secure the user password using Bcrypt. The users may also want their photos to be secure, so I will want to be clear how pictures are stored or displayed up front.
+
+d. What functionality will your app include? 
+	The app is divided into 2 categories: users who are looking for National Park information and those that are also looking to track their National Park trips.
+	1) A user will visit the site and be greeted by a random pull of National Parks from the API. There will be an option to sign in or create an account if they would like to use the journaling feature of the site (category 2). There will be a search feature based on general geographic location (some options may be by state or general location like northeast or southwest) or by park name. A user will be able to select a park and see general information about the park:	
+- The name of the park
+- The address of the park
+- Announcements from the park
+- A description of the park
+- Activities at the park
+- Nearby activities
+- A link to the NPS site to the park for reservation details for camping or other
+**If implemented, a count of how many users have visited the park and/or favorited the park**
+	
+	2) A user will visit the site and be able to use the search functionality as well as see the general information for a park, but will create an account. Their homepage will start with a list of parks close to the geographic location they designated when they signed up (if no designation, it will just be the same homepage that others see with a random collection). However this user will have a user dashboard that is unique to them. They can submit a journal entry for a visit to a park that includes stay notes and pictures. This entry will then follow the user so that when they are looking at park information they are able to see if they have already visited a park and **potentially** show if they favorited a park. The journal will have 2 goals: allowing users to keep a central location of their trip notes that is accessible anywhere and organized, but also displayed in a format that would allow them to present it to friends or family after a trip. 
+
+e. What features make your site more than CRUD? Do you have any stretch goals?
+	Users who use the journaling functionality will be able to Create an entry, Read those entries, Update those entries, and Delete them. However, beyond that the API calls will allow them to get additional information about parks without having to navigate the NPS site and will offer a convenient way to share trips with friends/family with a presentation. My stretch goal is associating the API information with user submitted information as well as picture handling for users who have many pictures (handling a maximum number of pictures or only allowing pictures hosted externally with a guide for how to do so)
