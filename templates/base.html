@@ -15,7 +15,7 @@
           </button>
           <div class="collapse navbar-collapse  " id="navbarSupportedContent">
             <ul class="navbar-nav mx-auto">
-                {% if session['user_id'] %}
+                {% if session['username'] %}
                 <li class="nav-item">
                     <a class="nav-link" href="/">HOME</a>
                 </li>
@@ -23,7 +23,7 @@
                     <a class="nav-link" href="/about">ABOUT</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/users/{{ session['user_id'] }}">DASHBOARD</a>
+                    <a class="nav-link" href="/users/{{ session['username'] }}">{{ session['username'] }}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">LOGOUT</a>
@@ -39,7 +39,7 @@
                     <a class="nav-link" href="/register">REGISTER</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/">SIGN IN</a>
+                    <a class="nav-link" href="/login">LOGIN</a>
                 </li>
                 {% endif %}
             </ul>
@@ -49,7 +49,7 @@
         {% for msg in get_flashed_messages() %}
         <p>{{ msg }}</p>
         {% endfor %}
-        
+
         {% block content %}{% endblock %}
     </div>
     <footer>

@@ -2,8 +2,9 @@
 from flask import Flask, render_template, request, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
-from models import db, connect_db, User
-from forms import SearchForm, RegistrationForm
+from models import db, connect_db, User, Park, Journal
+from forms import SearchForm, RegistrationForm, LoginForm
+from key import api_key
 
 app = Flask(__name__)
 
@@ -18,9 +19,11 @@ debug = DebugToolbarExtension(app)
 # from models.py
 connect_db(app)
 
+BASE_URL = "https://developer.nps.gov/api/v1"
+
 # create tables in database
-db.drop_all()
-db.create_all()
+# db.drop_all()
+# db.create_all()
 
 @app.route("/", methods=["GET", "POST"])
 def show_home():
@@ -41,13 +44,25 @@ def show_about():
 
     return render_template("about.html")
 
+# @app.route("/all")
+# def get_parks():
+#     """Use to get all parks and park codes
+# 
+#       Have to adjust start in URL by 50 after each call in order to step to the next set of 50"""
+
+#     parks = requests.get(f"{ BASE_URL }/parks?limit=50&start=450&api_key={ api_key }")
+#     parks_json = parks.json()
+#     parks_data = parks_json["data"]
+
+#     return render_template("all.html", parks=parks_data)
+
 @app.route("/results/<state>")
 def get_search_results(state):
     """Use search term and call API to show results"""
 
     state_code = state
 
-    parks = requests.get(f"https://developer.nps.gov/api/v1/parks?stateCode={ state_code }&api_key=vG3tRs4GwEF0x8qK9FmVp5h8AhZjbkH13FydMyTc")
+    parks = requests.get(f"{ BASE_URL }/parks?stateCode={ state_code }&api_key={ api_key }")
     parks_json = parks.json()
     parks_data = parks_json["data"]
 
@@ -58,6 +73,11 @@ def register_form():
     """Display registration form (GET) or create a user and show user dashboard (POST)"""
     form = RegistrationForm()
 
+    # if there is already a user logged in, let them know to logout
+    if "user_id" in session:
+        flash("Must logout first to register new user")
+        return redirect("/")
+        
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -70,7 +90,7 @@ def register_form():
         db.session.commit()
 
         # add username to session for authorization
-        session["user_id"] = user.id
+        session["username"] = user.username
 
         flash("User successfully created")
         # on successful login, redirect to users page
@@ -78,12 +98,37 @@ def register_form():
 
     return render_template("register.html", form=form)
 
-@app.route("/users/<int:user_id>")
-def user_page(user_id):
+@app.route("/login", methods=["GET", "POST"])
+def login_form():
+    """Display login form (GET) or login user and show user dashboard (POST)"""
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        # authenticate will return a user or False
+        user = User.authenticate(username, password)
+
+        if user:
+            flash("Login Successful")
+
+            # Add user_id to session for authorization
+            session["username"] = user.username
+
+            # on successful login, redirect to dashboard
+            return redirect(f"/users/{ user.username }")
+        else:
+            form.username.errors = ["Bad username and/or password"]
+
+    return render_template("login.html", form=form)
+
+@app.route("/users/<username>")
+def user_page(username):
     """Show logged in user page"""
 
-    if "user_id" in session:
-        user = User.query.get_or_404(user_id)
+    if "username" in session:
+        user = User.query.get_or_404(username)
 
         return render_template("user_dashboard.html", user=user)
 

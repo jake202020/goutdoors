@@ -11,11 +11,8 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    id = db.Column(db.Integer,
-                    primary_key=True,
-                    autoincrement=True)
-
     username = db.Column(db.String(30),
+                        primary_key=True,
                         nullable=False,
                         unique=True)
     
@@ -31,7 +28,9 @@ class User(db.Model):
     last_name = db.Column(db.String(30),
                             nullable=False)
 
-    state = db.Column(db.String(2))
+    state_code = db.Column(db.String(2))
+
+    journal = db.relationship("Journal", backref="user", cascade="all,delete")
 
     # registration method
     @classmethod
@@ -63,6 +62,53 @@ class User(db.Model):
             return u
         else:
             return False
+
+class Park(db.Model):
+    """Park Model"""
+
+    __tablename__ = "parks"
+
+    park_code = db.Column(db.String(4),
+                            primary_key=True,
+                            nullable=False)
+
+    name = db.Column(db.String,
+                    nullable=False)
+
+    state_code = db.Column(db.String(2),
+                            nullable=False)
+
+    journal = db.relationship("Journal", backref="park", cascade="all,delete")
+
+
+class Journal(db.Model):
+    """Journal model"""
+
+    __tablename__ = "journals"
+
+    id = db.Column(db.Integer,
+                    primary_key=True,
+                    autoincrement=True)
+
+    username = db.Column(db.String(30),
+                        db.ForeignKey('users.username'),
+                        nullable=False)
+    
+    title = db.Column(db.Text,
+                        nullable=False)
+
+    text = db.Column(db.Text,
+                    nullable=False)
+    
+    park_code = db.Column(db.String(4),
+                            db.ForeignKey('parks.park_code'),
+                            nullable=False)
+    
+    title_img_url = db.Column(db.String)
+
+    img_1_url = db.Column(db.String)
+
+    img_2_url = db.Column(db.String) 
 
 def connect_db(app):
     """Connect this database to provided Flask app.
