@@ -4,5 +4,14 @@
 
 {% block content %}
 <h1>{{ user.username }}'s Dashboard</h1>
+<a href="/users/{{ user.username }}/journals/new">Add Journal Entry</a>
+<ul>
+    {% for journal in journals %}
+    <h1>{{ journal.title }}</h1>
+    <p>{{ journal.text }}</p>
+    <p>{{ journal.park.name }}</p>
+    <hr>
+    {% endfor %}
+</ul>
 
 {% endblock %}

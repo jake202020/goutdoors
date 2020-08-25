@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
 from models import db, connect_db, User, Park, Journal
-from forms import SearchForm, RegistrationForm, LoginForm
+from forms import SearchForm, RegistrationForm, LoginForm, JournalForm
 from key import api_key
 
 app = Flask(__name__)
@@ -130,10 +130,19 @@ def user_page(username):
     if "username" in session:
         user = User.query.get_or_404(username)
 
-        return render_template("user_dashboard.html", user=user)
+        journals = Journal.query.filter(Journal.username == username).all()
+
+        return render_template("user_dashboard.html", user=user, journals=journals)
 
     flash("Need to be logged in first")
     return redirect("/")
+
+@app.route("/users/<username>/journals/new", methods=["GET", "POST"])
+def new_journal(username):
+    """Show form for adding a new journal (GET) or add journal to db and go to user page (POST)"""
+    form = JournalForm()
+
+    return render_template("new_journal.html", form=form)
 
 @app.route("/logout")
 def logout_user():
