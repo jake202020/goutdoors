@@ -28,7 +28,6 @@ class JournalForm(FlaskForm):
     title = StringField("Title", validators=[InputRequired()])
     text = StringField("Content", validators=[InputRequired()])
     park_code = StringField("Park Code", validators=[InputRequired()])
-    state_code = StringField("State Code", validators=[InputRequired()])
     title_img_url = StringField("Title Image")
     img_1_url = StringField("Title Image")
     img_2_url = StringField("Title Image")

@@ -140,13 +140,44 @@ def user_page(username):
 @app.route("/users/<username>/journals/new", methods=["GET", "POST"])
 def new_journal(username):
     """Show form for adding a new journal (GET) or add journal to db and go to user page (POST)"""
-    form = JournalForm()
+    if "username" in session:
+        form = JournalForm()
 
-    return render_template("new_journal.html", form=form)
+        user = User.query.get_or_404(username)
+
+        if form.validate_on_submit():
+            username = user.username
+            title = form.title.data
+            text = form.text.data
+            park_code = form.park_code.data
+            title_img_url = form.title_img_url.data
+            img_1_url = form.img_1_url.data
+            img_2_url = form.img_2_url.data
+
+            journal = Journal(username=username,
+                            title=title, 
+                            text=text, 
+                            park_code=park_code, 
+                            title_img_url=title_img_url, 
+                            img_1_url=img_1_url, 
+                            img_2_url=img_2_url)
+                            
+            db.session.add(journal)
+            db.session.commit()
+
+            flash("Journal successfully created")
+            # on successful login, redirect to users page
+            return redirect(f"/users/{ user.username }")
+
+        return render_template("new_journal.html", form=form)
+
+    flash("Need to be logged in first")
+    return redirect("/")
+
 
 @app.route("/logout")
 def logout_user():
     """Logout currently logged in user"""
 
-    session.pop("user_id")
+    session.pop("username")
     return redirect("/")
