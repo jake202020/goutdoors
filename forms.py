@@ -15,3 +15,4 @@ class RegistrationForm(FlaskForm):
     email = StringField("email", validators=[InputRequired()])
     first_name = StringField("First Name", validators=[InputRequired()])
     last_name = StringField("Last Name", validators=[InputRequired()])
+

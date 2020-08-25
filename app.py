@@ -1,5 +1,5 @@
 """Capstone 1: National Parks Site and Journal"""
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
 from models import db, connect_db, User
@@ -69,6 +69,30 @@ def register_form():
         db.session.add(user)
         db.session.commit()
 
-        return redirect("/")
+        # add username to session for authorization
+        session["user_id"] = user.id
+
+        flash("User successfully created")
+        # on successful login, redirect to users page
+        return redirect(f"/users/{ user.id }")
 
     return render_template("register.html", form=form)
+
+@app.route("/users/<int:user_id>")
+def user_page(user_id):
+    """Show logged in user page"""
+
+    if "user_id" in session:
+        user = User.query.get_or_404(user_id)
+
+        return render_template("user_dashboard.html", user=user)
+
+    flash("Need to be logged in first")
+    return redirect("/")
+
+@app.route("/logout")
+def logout_user():
+    """Logout currently logged in user"""
+
+    session.pop("user_id")
+    return redirect("/")
