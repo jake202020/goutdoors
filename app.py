@@ -2,8 +2,8 @@
 from flask import Flask, render_template, request, redirect
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
-from models import db, connect_db
-from forms import SearchForm
+from models import db, connect_db, User
+from forms import SearchForm, RegistrationForm
 
 app = Flask(__name__)
 
@@ -17,6 +17,9 @@ debug = DebugToolbarExtension(app)
 
 # from models.py
 connect_db(app)
+
+# create tables in database
+db.create_all()
 
 @app.route("/", methods=["GET", "POST"])
 def show_home():
@@ -48,3 +51,23 @@ def get_search_results(state):
     parks_data = parks_json["data"]
 
     return render_template("results.html", parks_data=parks_data)
+
+@app.route("/register", methods=["GET", "POST"])
+def register_form():
+    """Display registration form (GET) or create a user and show user dashboard (POST)"""
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        email = form.email.data
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+
+        user = User.register(username, password, email, first_name, last_name)
+        db.session.add(user)
+        db.session.commit()
+
+        return redirect("/")
+
+    return render_template("register.html", form=form)
