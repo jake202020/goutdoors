@@ -3,6 +3,8 @@
 {% block title %}Results{% endblock %}
 
 {% block content %}
+<h1>Search Results For {{ state_code }}</h1>
+<hr>
 <ul>
     {% for park in parks_data %}
         <li><a href="{{ park.url }}">{{ park.fullName }}</a></li>

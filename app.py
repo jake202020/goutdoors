@@ -19,6 +19,7 @@ debug = DebugToolbarExtension(app)
 connect_db(app)
 
 # create tables in database
+db.drop_all()
 db.create_all()
 
 @app.route("/", methods=["GET", "POST"])
@@ -50,7 +51,7 @@ def get_search_results(state):
     parks_json = parks.json()
     parks_data = parks_json["data"]
 
-    return render_template("results.html", parks_data=parks_data)
+    return render_template("results.html", parks_data=parks_data, state_code=state_code)
 
 @app.route("/register", methods=["GET", "POST"])
 def register_form():
