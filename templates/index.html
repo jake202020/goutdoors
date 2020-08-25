@@ -8,10 +8,23 @@
 <hr>
 <h3>Search National Parks</h3>
 <p>Search for national parks by name, state, or activity</p>
-<form>
-    <input type="text" placeholder="Search Criteria">
-    <button>Search</button>
-</form>
+	<form method="POST">
+		{{ form.hidden_tag() }}
+
+		{% for field in form if field.widget.input_type != 'hidden' %}
+
+		<p>
+			{{ field.label }}
+			{{ field }}
+
+			{% for error in field.errors %}
+			{{ error }}
+			{% endfor %}
+		</p>
+
+		{% endfor %}
+		<button>Search</button>
+	</form>
 <hr>
 <h3>GOutdoors Journaling</h3>
 <p>Create an account today and use GOutdoors to keep track of your most precious travel moments</p>
@@ -25,4 +38,4 @@
 <h3>This weeks National Park Spotlight</h3>
 <p>National Park Spotlight Here</p>
 
-{% endblock %} 
+{% endblock %}
