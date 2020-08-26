@@ -8,6 +8,10 @@
 <ul>
     {% for journal in journals %}
     <h1>{{ journal.title }}</h1>
+    <a href="">Edit</a>
+    <form method="POST" action="/users/{{ user.username }}/journals/{{ journal.id }}/delete">
+        <button>Delete</button>
+    </form>
     <p>{{ journal.text }}</p>
     <p>{{ journal.park.name }}</p>
     <hr>

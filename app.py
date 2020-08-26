@@ -127,14 +127,14 @@ def login_form():
 def user_page(username):
     """Show logged in user page"""
 
-    if "username" in session:
+    if session["username"] == username:
         user = User.query.get_or_404(username)
 
         journals = Journal.query.filter(Journal.username == username).all()
 
         return render_template("user_dashboard.html", user=user, journals=journals)
 
-    flash("Need to be logged in first")
+    flash("Unauthorized")
     return redirect("/")
 
 @app.route("/users/<username>/journals/new", methods=["GET", "POST"])
@@ -149,31 +149,57 @@ def new_journal(username):
 
         user = User.query.get_or_404(username)
 
-        if form.validate_on_submit():
-            username = user.username
-            title = form.title.data
-            text = form.text.data
-            park_code = form.park_name.data
-            title_img_url = form.title_img_url.data
-            img_1_url = form.img_1_url.data
-            img_2_url = form.img_2_url.data
+        if session["username"] == username:
+            if form.validate_on_submit():
+                username = user.username
+                title = form.title.data
+                text = form.text.data
+                park_code = form.park_name.data
+                title_img_url = form.title_img_url.data
+                img_1_url = form.img_1_url.data
+                img_2_url = form.img_2_url.data
 
-            journal = Journal(username=username,
-                            title=title, 
-                            text=text, 
-                            park_code=park_code, 
-                            title_img_url=title_img_url, 
-                            img_1_url=img_1_url, 
-                            img_2_url=img_2_url)
-                            
-            db.session.add(journal)
+                journal = Journal(username=username,
+                                title=title, 
+                                text=text, 
+                                park_code=park_code, 
+                                title_img_url=title_img_url, 
+                                img_1_url=img_1_url, 
+                                img_2_url=img_2_url)
+                                
+                db.session.add(journal)
+                db.session.commit()
+
+                flash("Journal successfully created")
+                # on successful login, redirect to users page
+                return redirect(f"/users/{ user.username }")
+
+            return render_template("new_journal.html", form=form)
+
+        flash("Not your dashboard")
+        return redirect("/")
+
+    flash("Need to be logged in first")
+    return redirect("/")
+
+# @app.route("/users/<username>/journals/<int:journal_id>/edit", methods=["GET", "POST"])
+
+
+@app.route("/users/<username>/journals/<int:journal_id>/delete", methods=["POST"])
+def delete_journal_entry(username, journal_id):
+    """Delete a specific journal entry for a logged in user"""
+    if "username" in session:
+        user = User.query.get_or_404(username)
+        journal = Journal.query.get_or_404(journal_id)
+
+        if session["username"] == journal.username:
+            db.session.delete(journal)
             db.session.commit()
 
-            flash("Journal successfully created")
-            # on successful login, redirect to users page
-            return redirect(f"/users/{ user.username }")
+            return redirect(f"/users/{ username }")
 
-        return render_template("new_journal.html", form=form)
+        flash("Not your journal to delete")
+        return redirect("/")
 
     flash("Need to be logged in first")
     return redirect("/")
