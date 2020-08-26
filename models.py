@@ -32,6 +32,8 @@ class User(db.Model):
 
     journal = db.relationship("Journal", backref="user", cascade="all,delete")
 
+    visit = db.relationship("Visit", backref="user", cascade="all,delete")
+
     # registration method
     @classmethod
     def register(cls, username, pwd, email, first_name, last_name):
@@ -78,7 +80,11 @@ class Park(db.Model):
     state_code = db.Column(db.String(2),
                             nullable=False)
 
+    visit_count = db.Column(db.Integer)
+
     journal = db.relationship("Journal", backref="park", cascade="all,delete")
+
+    visit = db.relationship("Visit", backref="park", cascade="all,delete")
 
 
 class Journal(db.Model):
@@ -109,6 +115,28 @@ class Journal(db.Model):
     img_1_url = db.Column(db.String)
 
     img_2_url = db.Column(db.String) 
+
+    visit = db.relationship("Visit", backref="journal", cascade="all,delete")
+
+class Visit(db.Model):
+    """Park Visit Model"""
+
+    __tablename__ = "visits"
+
+    id = db.Column(db.Integer,
+                    primary_key=True,
+                    autoincrement=True)
+
+    username = db.Column(db.String(30),
+                        db.ForeignKey('users.username'),
+                        nullable=False)
+
+    park_code = db.Column(db.String(4),
+                            db.ForeignKey('parks.park_code'),
+                            nullable=False)
+
+    journal_id = db.Column(db.Integer,
+                            db.ForeignKey('journals.id'))
 
 def connect_db(app):
     """Connect this database to provided Flask app.

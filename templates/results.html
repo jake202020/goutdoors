@@ -8,6 +8,16 @@
 <ul>
     {% for park in parks_data %}
         <li><a href="{{ park.url }}">{{ park.fullName }}</a></li>
+        
+        {% if park.visit_count > 0 %}
+        <h6>Has been visited {{ park.visit_count }} time(s).</h6>
+        {% endif %}
+        {% if visits %}
+            {% if visits[0].park_code == park.parkCode %}
+            <p>You have visited this park</p>
+            {% endif %}
+            {% endif %}
+
         <hr>
     {% endfor %}
 

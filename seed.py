@@ -1,4 +1,4 @@
-from models import db, Park, Journal, User
+from models import db, Park, Journal, User, Visit
 from csv import DictReader
 from app import app
 

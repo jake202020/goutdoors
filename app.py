@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
-from models import db, connect_db, User, Park, Journal
+from models import db, connect_db, User, Park, Journal, Visit
 from forms import SearchForm, RegistrationForm, LoginForm, JournalForm
 from key import api_key
 
@@ -66,7 +66,24 @@ def get_search_results(state):
     parks_json = parks.json()
     parks_data = parks_json["data"]
 
-    return render_template("results.html", parks_data=parks_data, state_code=state_code)
+    for park in parks_data:
+        visit_count = Visit.query.filter(Visit.park_code == park["parkCode"]).count()
+        park["visit_count"] = visit_count
+
+        db.session.commit()
+
+    if 'username' not in session:
+        return render_template("results.html", parks_data=parks_data, state_code=state_code)
+
+    else:
+        visits = Visit.query.filter(Visit.username == session["username"]).all()
+
+        if visits:
+            return render_template("results.html", parks_data=parks_data, state_code=state_code, visits=visits)
+
+
+        return render_template("results.html", parks_data=parks_data, state_code=state_code)
+    
 
 @app.route("/register", methods=["GET", "POST"])
 def register_form():
@@ -137,6 +154,26 @@ def user_page(username):
     flash("Unauthorized")
     return redirect("/")
 
+@app.route("/users/<username>/delete", methods=["POST"])
+def delete_user(username):
+    """Delete logged in user"""
+
+    if "username" in session:
+        user = User.query.get_or_404(username)
+
+        if session["username"] == username:
+            db.session.delete(user)
+            db.session.commit()
+
+            session.pop("username")
+            return redirect("/")
+
+        flash("Unauthorized")
+        return redirect("/")
+
+    flash("Need to be logged in first")
+    return redirect("/")
+
 @app.route("/users/<username>/journals/new", methods=["GET", "POST"])
 def new_journal(username):
     """Show form for adding a new journal (GET) or add journal to db and go to user page (POST)"""
@@ -168,6 +205,10 @@ def new_journal(username):
                                 img_2_url=img_2_url)
                                 
                 db.session.add(journal)
+                db.session.commit()
+
+                visit = Visit(username=username, park_code=park_code, journal_id=journal.id)
+                db.session.add(visit)
                 db.session.commit()
 
                 flash("Journal successfully created")
