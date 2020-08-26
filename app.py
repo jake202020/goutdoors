@@ -94,7 +94,7 @@ def register_form():
 
         flash("User successfully created")
         # on successful login, redirect to users page
-        return redirect(f"/users/{ user.id }")
+        return redirect(f"/users/{ user.username }")
 
     return render_template("register.html", form=form)
 
@@ -141,7 +141,11 @@ def user_page(username):
 def new_journal(username):
     """Show form for adding a new journal (GET) or add journal to db and go to user page (POST)"""
     if "username" in session:
+
         form = JournalForm()
+
+        # Get park_code and name from db table for select field in form
+        form.park_name.choices = [(p.park_code, p.name) for p in Park.query.order_by('name')]
 
         user = User.query.get_or_404(username)
 
@@ -149,7 +153,7 @@ def new_journal(username):
             username = user.username
             title = form.title.data
             text = form.text.data
-            park_code = form.park_code.data
+            park_code = form.park_name.data
             title_img_url = form.title_img_url.data
             img_1_url = form.img_1_url.data
             img_2_url = form.img_2_url.data
@@ -173,7 +177,6 @@ def new_journal(username):
 
     flash("Need to be logged in first")
     return redirect("/")
-
 
 @app.route("/logout")
 def logout_user():
