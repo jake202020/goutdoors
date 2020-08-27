@@ -21,9 +21,11 @@ connect_db(app)
 
 BASE_URL = "https://developer.nps.gov/api/v1"
 
-# create tables in database
-# db.drop_all()
-# db.create_all()
+
+
+##############################################
+############## General Routes ################
+##############################################
 
 @app.route("/", methods=["GET", "POST"])
 def show_home():
@@ -43,18 +45,6 @@ def show_about():
     """Show about page for site"""
 
     return render_template("about.html")
-
-# @app.route("/all")
-# def get_parks():
-#     """Use to get all parks and park codes
-# 
-#       Have to adjust start in URL by 50 after each call in order to step to the next set of 50"""
-
-#     parks = requests.get(f"{ BASE_URL }/parks?limit=50&start=450&api_key={ api_key }")
-#     parks_json = parks.json()
-#     parks_data = parks_json["data"]
-
-#     return render_template("all.html", parks=parks_data)
 
 @app.route("/results/<state>")
 def get_search_results(state):
@@ -91,7 +81,7 @@ def register_form():
     form = RegistrationForm()
 
     # if there is already a user logged in, let them know to logout
-    if "user_id" in session:
+    if "username" in session:
         flash("Must logout first to register new user")
         return redirect("/")
         
@@ -118,6 +108,12 @@ def register_form():
 @app.route("/login", methods=["GET", "POST"])
 def login_form():
     """Display login form (GET) or login user and show user dashboard (POST)"""
+    
+    # if there is already a user logged in, let them know to logout
+    if "username" in session:
+        flash("Must logout first to sign in as another user")
+        return redirect("/")
+    
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -139,6 +135,11 @@ def login_form():
             form.username.errors = ["Bad username and/or password"]
 
     return render_template("login.html", form=form)
+
+
+##############################################
+############## User Routes ###################
+##############################################
 
 @app.route("/users/<username>")
 def user_page(username):
@@ -173,6 +174,19 @@ def delete_user(username):
 
     flash("Need to be logged in first")
     return redirect("/")
+
+@app.route("/logout")
+def logout_user():
+    """Logout currently logged in user"""
+    
+    session.pop("username")
+
+    flash(f"Successfully Logged Out")
+    return redirect("/login")
+
+##############################################
+############## Journal Routes ################
+##############################################
 
 @app.route("/users/<username>/journals/new", methods=["GET", "POST"])
 def new_journal(username):
@@ -245,9 +259,17 @@ def delete_journal_entry(username, journal_id):
     flash("Need to be logged in first")
     return redirect("/")
 
-@app.route("/logout")
-def logout_user():
-    """Logout currently logged in user"""
+################################################
+########### Route for app development ##########
+################################################
+# @app.route("/all")
+# def get_parks():
+#     """Use to get all parks and park codes
+# 
+#       Have to adjust start in URL by 50 after each call in order to step to the next set of 50"""
 
-    session.pop("username")
-    return redirect("/")
+#     parks = requests.get(f"{ BASE_URL }/parks?limit=50&start=450&api_key={ api_key }")
+#     parks_json = parks.json()
+#     parks_data = parks_json["data"]
+
+#     return render_template("all.html", parks=parks_data)
