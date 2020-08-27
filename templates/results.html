@@ -6,20 +6,39 @@
 <h1>Search Results For {{ state_code }}</h1>
 <hr>
 <ul>
+    <div class="card-columns">
     {% for park in parks_data %}
-        <li><a href="{{ park.url }}">{{ park.fullName }}</a></li>
-        
-        {% if park.visit_count > 0 %}
-        <h6>Has been visited {{ park.visit_count }} time(s).</h6>
-        {% endif %}
-        {% if visits %}
-            {% if visits[0].park_code == park.parkCode %}
-            <p>You have visited this park</p>
-            {% endif %}
-            {% endif %}
 
-        <hr>
+    <div class="card my-5">
+        {% if park.images[0] %}
+        <img class="card-img-top" src="{{ park.images[0].url }}" alt="Card image cap">
+        {% else %}
+        <img class="card-img-top" src="/static/park.jpg" alt="Card image cap">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ park.fullName }}</a></h5>
+            {% if park.visit_count > 0 %}
+                <h6>Has been visited {{ park.visit_count }} time(s).</h6>
+            {% endif %}
+            {% if visits %}
+                {% for visit in visits %}
+                    {% if visit.park_code == park.parkCode %}
+                        <p class="card-text"><a href="/users/{{ session['username'] }}">You visited this park on: {{ visit.date }}.</a></p>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        <p class="card-text">{{ park.description }}</p>
+        <p class="card-text">Activities:</p>
+        {% if park.activities %}
+            {% for activity in park.activities %}
+                <li>{{ activity.name }}</li>
+            {% endfor %}
+        {% endif %}
+        <a href="{{ park.url }}" class="btn btn-primary" target="blank">More Information</a>
+        </div>
+      </div>     
     {% endfor %}
+    </div>
 
 </ul>
 

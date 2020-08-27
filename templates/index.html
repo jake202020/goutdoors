@@ -3,27 +3,35 @@
 {% block title %} Home {% endblock %}
 
 {% block content %}
-<h2>Welcome to GOutdoors</h2>
-<p>Your Destination For National Park Information and Travel Journaling</p>
-<hr>
+
+
+  <div class="jumbotron jumbotron-fluid">
+	<div class="container">
+	  <h1 class="display-4">Welcome to GOutdoors</h1>
+	  <p class="lead">Your Destination For National Park Information and Travel Journaling</p>
+	</div>
+  </div>
+
 <h3>Search National Parks</h3>
-<p>Search for national parks by name, state, or activity</p>
+<p>Search for national parks by state</p>
 	<form method="POST">
 		{{ form.hidden_tag() }}
 
 		{% for field in form if field.widget.input_type != 'hidden' %}
-
-		<p>
-			{{ field.label }}
-			{{ field }}
-
-			{% for error in field.errors %}
-			{{ error }}
-			{% endfor %}
-		</p>
+		<div class="form-group">
+			<p>
+				{{ field.label }}
+				{{ field(class_="form-control") }}
+	
+				{% for error in field.errors %}
+				{{ error }}
+				{% endfor %}
+			</p>
+		</div>
+		
 
 		{% endfor %}
-		<button>Search</button>
+		<button type="submit" class="btn btn-primary mb-2">Search</button>
 	</form>
 <hr>
 <h3>GOutdoors Journaling</h3>
@@ -31,9 +39,10 @@
 <p>Include in your journaling:</p>
 <ul>
     <li>Notes from your travels, organized by day of the trip</li>
-    <li>3 pictures for each journal entry</li>
-    <li>An easy way to present your travels to family and friends</li>
+    <li>1 picture for each journal entry (capacity for additional images coming soon)</li>
+	<li>An easy way to present your travels to family and friends</li>
 </ul>
-<hr>
+<a href="/register" class="btn btn-primary" role="button">Register Today</a>
+
 
 {% endblock %}

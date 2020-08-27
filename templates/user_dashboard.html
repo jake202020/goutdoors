@@ -3,22 +3,32 @@
 {% block title %}User Dashboard{% endblock %}
 
 {% block content %}
-<h1>{{ user.username }}'s Dashboard</h1>
 <form method="POST" action="/users/{{ user.username }}/delete">
-    <button>Delete User</button>
+    <button type="submit" class="btn btn-link"><span class="badge badge-pill badge-danger">Delete User</span></button>
 </form>
-<a href="/users/{{ user.username }}/journals/new">Add Journal Entry</a>
-<ul>
+
+<h1>{{ user.username }}'s Dashboard </h1>
+
+<a href="/users/{{ user.username }}/journals/new"  type="button" class="btn btn-success">Add Journal Entry</a>
+
     {% for journal in journals %}
-    <h1>{{ journal.title }}</h1>
-    <a href="">Edit</a>
-    <form method="POST" action="/users/{{ user.username }}/journals/{{ journal.id }}/delete">
-        <button>Delete</button>
-    </form>
-    <p>{{ journal.text }}</p>
-    <p>{{ journal.park.name }}</p>
-    <hr>
+    <div class="card my-5">
+        {% if journal.title_img_url %}
+        <img class="card-img-top" src="{{ journal.title_img_url }}" alt="Card image cap">
+        {% else %}
+        <img class="card-img-top" src="/static/park.jpg" alt="Card image cap">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ journal.title }}</h5>
+                <a href="/users/{{ user.username }}/journals/{{ journal.id }}/edit" type="button" class="badge badge-pill badge-warning ml-3">Edit</a>
+                <form method="POST" action="/users/{{ user.username }}/journals/{{ journal.id }}/delete">
+                    <button type="submit" class="btn btn-link"><span class="badge badge-pill badge-danger">Delete</span></button>
+                </form>
+            <p class="card-text">{{ journal.date }}</p>
+            <p class="card-text">{{ journal.park.name }}</p>
+            <p class="card-text">{{ journal.text }}</p>
+        </div>
+    </div>
     {% endfor %}
-</ul>
 
 {% endblock %}

@@ -3,8 +3,9 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
 from models import db, connect_db, User, Park, Journal, Visit
-from forms import SearchForm, RegistrationForm, LoginForm, JournalForm
+from forms import SearchForm, RegistrationForm, LoginForm, NewJournalForm, EditJournalForm
 from key import api_key
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -144,15 +145,17 @@ def login_form():
 @app.route("/users/<username>")
 def user_page(username):
     """Show logged in user page"""
+    if "username" in session:
+        if session["username"] == username:
+            user = User.query.get_or_404(username)
 
-    if session["username"] == username:
-        user = User.query.get_or_404(username)
+            journals = Journal.query.filter(Journal.username == username).order_by(Journal.date.desc()).all()
 
-        journals = Journal.query.filter(Journal.username == username).all()
+            return render_template("user_dashboard.html", user=user, journals=journals)
 
-        return render_template("user_dashboard.html", user=user, journals=journals)
-
-    flash("Unauthorized")
+        flash("Unauthorized")
+        return redirect("/")
+    flash("Need to be logged in first")
     return redirect("/")
 
 @app.route("/users/<username>/delete", methods=["POST"])
@@ -192,41 +195,38 @@ def logout_user():
 def new_journal(username):
     """Show form for adding a new journal (GET) or add journal to db and go to user page (POST)"""
     if "username" in session:
-
-        form = JournalForm()
-
-        # Get park_code and name from db table for select field in form
-        form.park_name.choices = [(p.park_code, p.name) for p in Park.query.order_by('name')]
-
-        user = User.query.get_or_404(username)
-
         if session["username"] == username:
+            form = NewJournalForm()
+
+            # Get park_code and name from db table for select field in form
+            form.park_name.choices = [(p.park_code, p.name) for p in Park.query.order_by('name')]
+
+            user = User.query.get_or_404(username)
+
             if form.validate_on_submit():
+                date = form.date.data
                 username = user.username
                 title = form.title.data
                 text = form.text.data
                 park_code = form.park_name.data
                 title_img_url = form.title_img_url.data
-                img_1_url = form.img_1_url.data
-                img_2_url = form.img_2_url.data
 
-                journal = Journal(username=username,
+                journal = Journal(date=date,
+                                username=username,
                                 title=title, 
                                 text=text, 
                                 park_code=park_code, 
-                                title_img_url=title_img_url, 
-                                img_1_url=img_1_url, 
-                                img_2_url=img_2_url)
+                                title_img_url=title_img_url)
                                 
                 db.session.add(journal)
                 db.session.commit()
 
-                visit = Visit(username=username, park_code=park_code, journal_id=journal.id)
+                visit = Visit(date=date,username=username, park_code=park_code, journal_id=journal.id)
                 db.session.add(visit)
                 db.session.commit()
 
                 flash("Journal successfully created")
-                # on successful login, redirect to users page
+                # on successful creation, redirect to users page
                 return redirect(f"/users/{ user.username }")
 
             return render_template("new_journal.html", form=form)
@@ -237,11 +237,46 @@ def new_journal(username):
     flash("Need to be logged in first")
     return redirect("/")
 
-# @app.route("/users/<username>/journals/<int:journal_id>/edit", methods=["GET", "POST"])
+@app.route("/users/<username>/journals/<int:journal_id>/edit", methods=["GET", "POST"])
+def edit_journal(username, journal_id):
+    """Show form for editing a journal (GET) or add journal edits to db and go to user page (POST)
+    
+    User cannot edit the park they visited"""
+    
+    if "username" in session:
+        if session["username"] == username:
+            journal = Journal.query.get_or_404(journal_id)
+            user = User.query.get_or_404(username)
 
+            form = EditJournalForm(date=journal.date,
+                                username=journal.username,
+                                title=journal.title, 
+                                text=journal.text, 
+                                title_img_url=journal.title_img_url)
+
+            if form.validate_on_submit():
+                journal.date = form.date.data
+                journal.username = user.username
+                journal.title = form.title.data
+                journal.text = form.text.data
+                journal.title_img_url = form.title_img_url.data
+                                
+                db.session.commit()
+
+                flash("Journal updated")
+                # on successful edit, redirect to users page
+                return redirect(f"/users/{ user.username }")
+
+            return render_template("edit_journal.html", form=form)
+
+        flash("Not your journal")
+        return redirect("/")
+
+    flash("Need to be logged in first")
+    return redirect("/")
 
 @app.route("/users/<username>/journals/<int:journal_id>/delete", methods=["POST"])
-def delete_journal_entry(username, journal_id):
+def delete_journal(username, journal_id):
     """Delete a specific journal entry for a logged in user"""
     if "username" in session:
         user = User.query.get_or_404(username)

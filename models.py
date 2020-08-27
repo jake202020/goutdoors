@@ -96,6 +96,9 @@ class Journal(db.Model):
                     primary_key=True,
                     autoincrement=True)
 
+    date = db.Column(db.DateTime,
+                        nullable=False)
+
     username = db.Column(db.String(30),
                         db.ForeignKey('users.username'),
                         nullable=False)
@@ -112,10 +115,6 @@ class Journal(db.Model):
     
     title_img_url = db.Column(db.String)
 
-    img_1_url = db.Column(db.String)
-
-    img_2_url = db.Column(db.String) 
-
     visit = db.relationship("Visit", backref="journal", cascade="all,delete")
 
 class Visit(db.Model):
@@ -126,6 +125,9 @@ class Visit(db.Model):
     id = db.Column(db.Integer,
                     primary_key=True,
                     autoincrement=True)
+
+    date = db.Column(db.DateTime,
+                        nullable=False)
 
     username = db.Column(db.String(30),
                         db.ForeignKey('users.username'),
