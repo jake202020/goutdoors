@@ -6,6 +6,7 @@ from models import db, connect_db, User, Park, Journal, Visit
 from forms import SearchForm, RegistrationForm, LoginForm, NewJournalForm, EditJournalForm
 from key import api_key
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 
@@ -13,7 +14,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///capstone_1_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = "SECRET!"
+app.config['SECRET_KEY'] = os.environ.get["SECRET_KEY", "SECRET!"]
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
