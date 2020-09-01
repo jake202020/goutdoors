@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}User Journal{% endblock %}
+
+{% block content %}
+<h1>{{ journal.title }}</h1>
+
+<a href="/users/{{ user.username }}/journals/{{ journal.id }}/edit" type="button" class="badge badge-pill badge-warning ml-3">Edit</a>
+                <form method="POST" action="/users/{{ user.username }}/journals/{{ journal.id }}/delete">
+                    <button type="submit" class="btn btn-link"><span class="badge badge-pill badge-danger">Delete</span></button>
+                </form>
+
+        {% if journal.title_img_url %}
+        <img src="{{ journal.title_img_url }}" alt="image">
+        {% else %}
+        <img src="/static/park.jpg" alt="image">
+        {% endif %}
+        <hr>
+    
+            <h5>Date of Visit:</h5>    
+            <p class="card-text">{{ journal.date }}</p>
+            <h5>Park Visited:</h5>
+            <p class="card-text">{{ journal.park.name }}</p>
+            <hr>
+            <h5>Journal Notes:</h5>
+            <p class="card-text">{{ journal.text }}</p>
+
+            <a href="/users/{{ user.username }}/journals/new"  type="button" class="btn btn-success">Add Journal Entry</a>
+
+{% endblock %}

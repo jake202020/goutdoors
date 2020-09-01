@@ -19,14 +19,10 @@
         <img class="card-img-top" src="/static/park.jpg" alt="Card image cap">
         {% endif %}
         <div class="card-body">
-            <h5 class="card-title">{{ journal.title }}</h5>
-                <a href="/users/{{ user.username }}/journals/{{ journal.id }}/edit" type="button" class="badge badge-pill badge-warning ml-3">Edit</a>
-                <form method="POST" action="/users/{{ user.username }}/journals/{{ journal.id }}/delete">
-                    <button type="submit" class="btn btn-link"><span class="badge badge-pill badge-danger">Delete</span></button>
-                </form>
+            <h5 class="card-title"><a href="/users/{{ user.username }}/journals/{{ journal.id }}">{{ journal.title }}</a></h5>
             <p class="card-text">{{ journal.date }}</p>
             <p class="card-text">{{ journal.park.name }}</p>
-            <p class="card-text">{{ journal.text }}</p>
+            <p class="card-text">{{ journal.text|truncate(25) }}</p>
         </div>
     </div>
     {% endfor %}

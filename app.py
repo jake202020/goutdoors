@@ -71,6 +71,10 @@ def get_search_results(state):
         visits = Visit.query.filter(Visit.username == session["username"]).all()
 
         if visits:
+            for visit in visits:
+                adjusted_date = visit.date.strftime("%b %d, %Y")
+                visit.date = adjusted_date
+
             return render_template("results.html", parks_data=parks_data, state_code=state_code, visits=visits)
 
 
@@ -151,6 +155,10 @@ def user_page(username):
             user = User.query.get_or_404(username)
 
             journals = Journal.query.filter(Journal.username == username).order_by(Journal.date.desc()).all()
+
+            for journal in journals:
+                adjusted_date = journal.date.strftime("%b %d, %Y")
+                journal.date = adjusted_date
 
             return render_template("user_dashboard.html", user=user, journals=journals)
 
@@ -238,6 +246,26 @@ def new_journal(username):
     flash("Need to be logged in first")
     return redirect("/")
 
+@app.route("/users/<username>/journals/<int:journal_id>")
+def view_journal(username, journal_id):
+    """Show user a single journal"""
+
+    if "username" in session:
+        if session["username"] == username:
+            journal = Journal.query.get_or_404(journal_id)
+            user = User.query.get_or_404(username)
+
+            adjusted_date = journal.date.strftime("%b %d, %Y")
+            journal.date = adjusted_date
+
+            return render_template("journal.html", journal=journal, user=user)
+
+        flash("Not your journal")
+        return redirect("/")
+
+    flash("Need to be logged in first")
+    return redirect("/")
+
 @app.route("/users/<username>/journals/<int:journal_id>/edit", methods=["GET", "POST"])
 def edit_journal(username, journal_id):
     """Show form for editing a journal (GET) or add journal edits to db and go to user page (POST)
@@ -248,6 +276,7 @@ def edit_journal(username, journal_id):
         if session["username"] == username:
             journal = Journal.query.get_or_404(journal_id)
             user = User.query.get_or_404(username)
+            visit = Visit.query.get_or_404(journal_id)
 
             form = EditJournalForm(date=journal.date,
                                 username=journal.username,
@@ -257,6 +286,7 @@ def edit_journal(username, journal_id):
 
             if form.validate_on_submit():
                 journal.date = form.date.data
+                visit.date = form.date.data
                 journal.username = user.username
                 journal.title = form.title.data
                 journal.text = form.text.data
