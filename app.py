@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
 from models import db, connect_db, User, Park, Journal, Visit
-from forms import SearchForm, RegistrationForm, LoginForm, NewJournalForm, EditJournalForm
+from forms import SearchForm, RegistrationForm, LoginForm, NewJournalForm, EditJournalForm, EditUserForm
 from key import api_key
 from datetime import datetime
 import os
@@ -164,6 +164,41 @@ def user_page(username):
 
         flash("Unauthorized")
         return redirect("/")
+    flash("Need to be logged in first")
+    return redirect("/")
+
+@app.route("/users/<username>/edit", methods=["GET", "POST"])
+def edit_user(username):
+    """Show form for editing user details (GET) or add user edits to db and go to user page (POST)
+    
+    User cannot change username or password for now"""
+    
+    if "username" in session:
+        if session["username"] == username:
+            user = User.query.get_or_404(username)
+
+            form = EditUserForm(email = user.email,
+                                first_name = user.first_name,
+                                last_name = user.last_name,
+                                state_code= user.state_code)
+
+            if form.validate_on_submit():
+                user.email = form.email.data
+                user.first_name = form.first_name.data
+                user.last_name = form.last_name.data
+                user.state_code = form.state_code.data
+                                
+                db.session.commit()
+
+                flash("User updated")
+                # on successful edit, redirect to users page
+                return redirect(f"/users/{ user.username }")
+
+            return render_template("edit_user.html", form=form)
+
+        flash("Not your profile")
+        return redirect("/")
+
     flash("Need to be logged in first")
     return redirect("/")
 

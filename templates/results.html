@@ -23,7 +23,7 @@
             {% if visits %}
                 {% for visit in visits %}
                     {% if visit.park_code == park.parkCode %}
-                        <p class="card-text"><a href="/users/{{ session['username'] }}">You visited this park on: {{ visit.date }}.</a></p>
+                        <p class="card-text"><a href="/users/{{ session['username'] }}/journals/{{ visit.journal_id }}">You visited this park on: {{ visit.date }}.</a></p>
                     {% endif %}
                 {% endfor %}
             {% endif %}
