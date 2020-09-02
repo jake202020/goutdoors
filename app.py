@@ -4,11 +4,13 @@ from flask_debugtoolbar import DebugToolbarExtension
 import requests
 from models import db, connect_db, User, Park, Journal, Visit
 from forms import SearchForm, RegistrationForm, LoginForm, NewJournalForm, EditJournalForm, EditUserForm
+from flask_bootstrap import Bootstrap
 from key import api_key
 from datetime import datetime
 import os
 
 app = Flask(__name__)
+Bootstrap(app)
 
 # we are using a postgres database and this is our database to connect to.
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", 'postgresql:///capstone_1_db')

@@ -1,25 +1,35 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}New Journal{% endblock %}
 
 {% block content %}
-<form method="POST">
-    {{ form.hidden_tag() }}
+<h1>New Journal Entry</h1>
+<div class="container">
+    <form method="POST">
+        {{ form.csrf_token() }}
+        <div class="row">
+            <div class="form-group col-lg-2">
+                {{ wtf.form_field(form.date, class='form-control')}}
+            </div>
+            <div class="form-group col-lg-10">
+                {{ wtf.form_field(form.park_name, class='form-control')}}
+            </div>
+        </div>
+        <div class="form-group">
+                {{ wtf.form_field(form.title, class='form-control')}}
+        </div>
+        <div class="form-group">
+            {{ wtf.form_field(form.title_img_url, class='form-control')}}
+        </div>
+        <div class="form-group">
+            {{ wtf.form_field(form.text, class='form-control', rows="5")}}
+        </div>
+        <button  type="submit" class="btn btn-info">Add Journal</button>
+        <a href="/users/{{ session['username'] }}" class="btn btn-warning" type="button">Cancel</a>
+    </form>
 
-    {% for field in form if field.widget.input_type != 'hidden' %}
+</div>
 
-    <p>
-        {{ field.label }}
-        {{ field }}
-
-        {% for error in field.errors %}
-        {{ error }}
-        {% endfor %}
-    </p>
-
-    {% endfor %}
-    <button  type="submit" class="btn btn-info">Add Journal</button>
-    <a href="/users/{{ session['username'] }}" class="btn btn-warning" type="button">Cancel</a>
-</form>
 
 {% endblock %}

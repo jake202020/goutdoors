@@ -21,5 +21,7 @@
     <button type="submit" class="btn btn-info">Edit User</button>
     <a href="/users/{{ session['username'] }}" class="btn btn-warning" type="button">Cancel</a>
 </form>
-
+<form method="POST" action="/users/{{ session['username'] }}/delete">
+    <button type="submit" class="btn btn-link"><span class="badge badge-pill badge-danger mt-5">Delete User</span></button>
+</form>
 {% endblock %}
