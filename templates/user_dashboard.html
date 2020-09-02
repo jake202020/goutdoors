@@ -6,6 +6,9 @@
 <a href="/users/{{ user.username }}/edit" type="button" class="badge badge-pill badge-warning ml-3">Edit User</a>
 
 <h1>{{ user.username }}'s Dashboard </h1>
+{% if user.state_code %}
+<a href="/results/{{ user.state_code }}"  type="button" class="btn btn-info">Parks Near Me</a>
+{% endif %}
 
 <a href="/users/{{ user.username }}/journals/new"  type="button" class="btn btn-success">Add Journal Entry</a>
 

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %} Home {% endblock %}
 
@@ -15,22 +16,11 @@
 <h3>Search National Parks</h3>
 <p>Search for national parks by state</p>
 	<form method="POST">
-		{{ form.hidden_tag() }}
-
-		{% for field in form if field.widget.input_type != 'hidden' %}
-		<div class="form-group">
-			<p>
-				{{ field.label }}
-				{{ field(class_="form-control") }}
-	
-				{% for error in field.errors %}
-				{{ error }}
-				{% endfor %}
-			</p>
-		</div>
+		{{ form.csrf_token() }}
+        <div class="form-group col-sm-1 pl-0">
+                {{ wtf.form_field(form.state, class='form-control')}}
+        </div>
 		
-
-		{% endfor %}
 		<button type="submit" class="btn btn-primary mb-2">Search</button>
 	</form>
 <hr>
@@ -42,7 +32,10 @@
     <li>1 picture for each journal entry (capacity for additional images coming soon)</li>
 	<li>An easy way to present your travels to family and friends</li>
 </ul>
+{% if session["username"] %}
+<a href="/users/{{ session['username'] }}" class="btn btn-primary" role="button">Go to Journals</a>
+{% else %}
 <a href="/register" class="btn btn-primary" role="button">Register Today</a>
-
+{% endif %}
 
 {% endblock %}
