@@ -8,6 +8,7 @@ from flask_bootstrap import Bootstrap
 from key import api_key
 from datetime import datetime
 import os
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -99,10 +100,15 @@ def register_form():
         email = form.email.data
         first_name = form.first_name.data
         last_name = form.last_name.data
-
+        
         user = User.register(username, password, email, first_name, last_name)
-        db.session.add(user)
-        db.session.commit()
+        
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except IntegrityError as e:
+                flash("Username taken")
+                return redirect("/register")
 
         # add username to session for authorization
         session["username"] = user.username
@@ -310,6 +316,8 @@ def edit_journal(username, journal_id):
     User cannot edit the park they visited"""
     
     if "username" in session:
+        journal = Journal.query.get_or_404(journal_id)
+
         if session["username"] == username:
             journal = Journal.query.get_or_404(journal_id)
             user = User.query.get_or_404(username)
@@ -335,7 +343,7 @@ def edit_journal(username, journal_id):
                 # on successful edit, redirect to users page
                 return redirect(f"/users/{ user.username }")
 
-            return render_template("edit_journal.html", form=form)
+            return render_template("edit_journal.html", journal=journal, form=form)
 
         flash("Not your journal")
         return redirect("/")
