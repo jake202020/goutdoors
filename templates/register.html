@@ -1,24 +1,31 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Register{% endblock %}
 
 {% block content %}
-<form method="POST">
-    {{ form.hidden_tag() }}
-
-    {% for field in form if field.widget.input_type != 'hidden' %}
-
-    <p>
-        {{ field.label }}
-        {{ field }}
-
-        {% for error in field.errors %}
-        {{ error }}
-        {% endfor %}
-    </p>
-
-    {% endfor %}
+<h1>Register</h1>
+<form method="POST" class="mb-3">
+    {{ form.csrf_token() }}
+        <div class="row">
+            <div class="form-group col-lg-3 pl-3">
+                {{ wtf.form_field(form.first_name, class='form-control')}}
+            </div>
+            <div class="form-group  col-lg-3">
+                    {{ wtf.form_field(form.last_name, class='form-control')}}
+            </div>
+        </div>
+        <div class="form-group col-lg-6 pl-0">
+                {{ wtf.form_field(form.username, class='form-control')}}
+        </div>
+        <div class="form-group col-lg-6 pl-0">
+            {{ wtf.form_field(form.email, class='form-control')}}
+        </div>
+        <div class="form-group  col-lg-6 pl-0">
+                {{ wtf.form_field(form.password, class='form-control')}}
+        </div>
     <button type="submit" class="btn btn-primary">Register</button>
 </form>
+<a href="/login">Already registered? Sign in</a>
 
 {% endblock %}
