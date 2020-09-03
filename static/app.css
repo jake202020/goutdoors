@@ -4,6 +4,15 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
+#nav-bottom {
+    height: 265px;
+    background-image: url('/static/trees.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    margin-bottom: 10px;
+}
+
 img {
     height: 250px;
     width: 250px;
@@ -11,8 +20,14 @@ img {
 
 .jumbotron {
     background-image: url('/static/travel_map.jpg');
-    background-color: rgba(0, 0, 0, .15);
     background-size: cover;
+    background-position: center;
+}
+
+.container.jumbotron-text {
+    color: rgb(240, 240, 240);
+    background-color: rgba(0, 0, 0, .6);
+    border-radius: 10px;
 }
 
 img {
@@ -20,7 +35,6 @@ img {
 }
 
 footer {
-    /* position: fixed; */
     bottom: 0;
     width: 100%;
     margin-top: 50px;

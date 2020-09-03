@@ -9,7 +9,7 @@
     <div class="card-columns">
     {% for park in parks_data %}
 
-    <div class="card my-5">
+    <div class="card bg-light my-5">
         {% if park.images[0] %}
         <img class="card-img-top" src="{{ park.images[0].url }}" alt="Card image cap">
         {% else %}
