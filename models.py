@@ -16,9 +16,6 @@ class User(db.Model):
                         nullable=False,
                         unique=True)
     
-    role = db.Column(db.Text,
-                        nullable=False)
-    
     password = db.Column(db.Text,
                         nullable=False)
 
@@ -30,6 +27,9 @@ class User(db.Model):
     
     last_name = db.Column(db.String(30),
                             nullable=False)
+
+    role = db.Column(db.Text,
+                        nullable=False)
 
     state_code = db.Column(db.String(2))
 
