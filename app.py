@@ -5,7 +5,7 @@ import requests
 from models import db, connect_db, User, Park, Journal, Visit
 from forms import SearchForm, RegistrationForm, LoginForm, NewJournalForm, EditJournalForm, EditUserForm
 from flask_bootstrap import Bootstrap
-from key import api_key
+from key import api_key, admin_user
 from datetime import datetime
 import os
 from sqlalchemy.exc import IntegrityError
@@ -100,8 +100,9 @@ def register_form():
         email = form.email.data
         first_name = form.first_name.data
         last_name = form.last_name.data
+        role = "user"
         
-        user = User.register(username, password, email, first_name, last_name)
+        user = User.register(username, password, email, first_name, last_name, role)
         
         try:
             db.session.add(user)
@@ -138,13 +139,20 @@ def login_form():
         user = User.authenticate(username, password)
 
         if user:
-            flash("Login Successful")
+            if user.role == "admin":
+                flash(f"Logged in as ADMIN")
+                session["username"] = user.username
+                
+                return redirect("/users/admin")
 
-            # Add user_id to session for authorization
-            session["username"] = user.username
+            else:
+                flash("Login Successful")
 
-            # on successful login, redirect to dashboard
-            return redirect(f"/users/{ user.username }")
+                # Add user_id to session for authorization
+                session["username"] = user.username
+
+                # on successful login, redirect to dashboard
+                return redirect(f"/users/{ user.username }")
         else:
             form.username.errors = ["Bad username and/or password"]
 
@@ -182,7 +190,7 @@ def edit_user(username):
     User cannot change username or password for now"""
     
     if "username" in session:
-        if session["username"] == username:
+        if session["username"] == username  or session["username"] == admin_user:
             user = User.query.get_or_404(username)
 
             form = EditUserForm(email = user.email,
@@ -202,7 +210,7 @@ def edit_user(username):
                 # on successful edit, redirect to users page
                 return redirect(f"/users/{ user.username }")
 
-            return render_template("edit_user.html", form=form)
+            return render_template("edit_user.html", form=form, user=user)
 
         flash("Not your profile")
         return redirect("/")
@@ -369,6 +377,29 @@ def delete_journal(username, journal_id):
 
     flash("Need to be logged in first")
     return redirect("/")
+
+################################################
+########### Route for admin user ###############
+################################################
+@app.route("/users/admin")
+def admin_route():
+    """Display interface for admin account to see all users and make changes"""
+    if "username" in session:
+
+        if session["username"] == admin_user:
+            users = User.query.all()
+            
+            return render_template('admin.html', users=users)
+
+        flash("You do not have access to this route")
+        return redirect("/")
+
+    flash("Need to be logged in first")
+    return redirect("/")
+
+    
+
+
 
 ################################################
 ########### Route for app development ##########

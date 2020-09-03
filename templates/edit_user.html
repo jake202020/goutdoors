@@ -4,7 +4,7 @@
 {% block title %}Edit User{% endblock %}
 
 {% block content %}
-<h1>Edit {{ session["username"] }}'s Profile</h1>
+<h1>Edit {{ user.username }}'s Profile</h1>
 <form method="POST" class="mb-5">
     {{ form.csrf_token() }}
         <div class="row">

@@ -16,6 +16,9 @@ class User(db.Model):
                         nullable=False,
                         unique=True)
     
+    role = db.Column(db.Text,
+                        nullable=False)
+    
     password = db.Column(db.Text,
                         nullable=False)
 
@@ -36,7 +39,7 @@ class User(db.Model):
 
     # registration method
     @classmethod
-    def register(cls, username, pwd, email, first_name, last_name):
+    def register(cls, username, pwd, email, first_name, last_name, role):
         """Register user with hashed password and return user"""
 
         hashed = bcrypt.generate_password_hash(pwd)
@@ -48,7 +51,8 @@ class User(db.Model):
                     password=hashed_utf8,
                     email=email,
                     first_name=first_name,
-                    last_name=last_name)
+                    last_name=last_name,
+                    role=role)
 
     # authentication method
     @classmethod
