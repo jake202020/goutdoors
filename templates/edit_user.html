@@ -22,7 +22,7 @@
             {{ wtf.form_field(form.state_code, class='form-control')}}
         </div>
 
-        <button type="submit" class="btn btn-info">Edit User</button>
+        <button type="submit" class="btn btn-info">Save Edits</button>
     <a href="/users/{{ session['username'] }}" class="btn btn-warning" type="button">Cancel</a>
 </form>
 <form method="POST" onSubmit="return confirm('Are you sure you want to delete this user?')" action="/users/{{ session['username'] }}/delete">

@@ -75,7 +75,7 @@ def get_search_results(state):
 
         if visits:
             for visit in visits:
-                adjusted_date = visit.date.strftime("%b %d, %Y")
+                adjusted_date = visit.date_of_visit.strftime("%b %d, %Y")
                 visit.date = adjusted_date
 
             return render_template("results.html", parks_data=parks_data, state_code=state_code, visits=visits)
@@ -170,10 +170,10 @@ def user_page(username):
         if session["username"] == username:
             user = User.query.get_or_404(username)
 
-            journals = Journal.query.filter(Journal.username == username).order_by(Journal.date.desc()).all()
+            journals = Journal.query.filter(Journal.username == username).order_by(Journal.date_of_visit.desc()).all()
 
             for journal in journals:
-                adjusted_date = journal.date.strftime("%b %d, %Y")
+                adjusted_date = journal.date_of_visit.strftime("%b %d, %Y")
                 journal.date = adjusted_date
 
             return render_template("user_dashboard.html", user=user, journals=journals)
@@ -264,14 +264,16 @@ def new_journal(username):
             user = User.query.get_or_404(username)
 
             if form.validate_on_submit():
-                date = form.date.data
+                date_added = datetime.now()
+                date_of_visit = form.date.data
                 username = user.username
                 title = form.title.data
                 text = form.text.data
                 park_code = form.park_name.data
                 title_img_url = form.title_img_url.data
 
-                journal = Journal(date=date,
+                journal = Journal(date_added=date_added,
+                                date_of_visit=date_of_visit,
                                 username=username,
                                 title=title, 
                                 text=text, 
@@ -281,7 +283,56 @@ def new_journal(username):
                 db.session.add(journal)
                 db.session.commit()
 
-                visit = Visit(date=date,username=username, park_code=park_code, journal_id=journal.id)
+                visit = Visit(date=date_of_visit,username=username, park_code=park_code, journal_id=journal.id)
+                db.session.add(visit)
+                db.session.commit()
+
+                flash("Journal successfully created")
+                # on successful creation, redirect to users page
+                return redirect(f"/users/{ user.username }")
+
+            return render_template("new_journal.html", form=form)
+
+        flash("Not your dashboard")
+        return redirect("/")
+
+    flash("Need to be logged in first")
+    return redirect("/")
+
+@app.route("/users/<username>/journals/<park_code>/new", methods=["GET", "POST"])
+def new_journal_from_search(username, park_code):
+    """Show form for adding a new journal with park already chosen (GET) or add journal to db and go to user page (POST)"""
+    if "username" in session:
+        if session["username"] == username:
+            form = NewJournalForm()
+
+            # Get park_code and name from db table for select field in form
+            park = Park.query.get_or_404(park_code)
+            form.park_name.choices = [(park_code, park.name)]
+
+            user = User.query.get_or_404(username)
+
+            if form.validate_on_submit():
+                date_added = datetime.now()
+                date_of_visit = form.date.data
+                username = user.username
+                title = form.title.data
+                text = form.text.data
+                park_code = form.park_name.data
+                title_img_url = form.title_img_url.data
+
+                journal = Journal(date_added=date_added,
+                                date_of_visit=date_of_visit,
+                                username=username,
+                                title=title, 
+                                text=text, 
+                                park_code=park_code, 
+                                title_img_url=title_img_url)
+                                
+                db.session.add(journal)
+                db.session.commit()
+
+                visit = Visit(date=date_of_visit,username=username, park_code=park_code, journal_id=journal.id)
                 db.session.add(visit)
                 db.session.commit()
 
@@ -306,8 +357,11 @@ def view_journal(username, journal_id):
             journal = Journal.query.get_or_404(journal_id)
             user = User.query.get_or_404(username)
 
-            adjusted_date = journal.date.strftime("%b %d, %Y")
-            journal.date = adjusted_date
+            adjusted_visit_date = journal.date_of_visit.strftime("%b %d, %Y")
+            journal.date_of_visit = adjusted_visit_date
+
+            adjusted_added_date = journal.date_added.strftime("%b %d, %Y")
+            journal.date_added = adjusted_added_date
 
             return render_template("journal.html", journal=journal, user=user)
 
@@ -327,18 +381,19 @@ def edit_journal(username, journal_id):
         journal = Journal.query.get_or_404(journal_id)
 
         if session["username"] == username:
+           
             journal = Journal.query.get_or_404(journal_id)
-            user = User.query.get_or_404(username)
             visit = Visit.query.get_or_404(journal_id)
+            user = User.query.get_or_404(username)
 
-            form = EditJournalForm(date=journal.date,
+            form = EditJournalForm(date=journal.date_of_visit,
                                 username=journal.username,
                                 title=journal.title, 
                                 text=journal.text, 
                                 title_img_url=journal.title_img_url)
 
-            if form.validate_on_submit():
-                journal.date = form.date.data
+            if form.validate_on_submit():                
+                journal.date_of_visit = form.date.data
                 visit.date = form.date.data
                 journal.username = user.username
                 journal.title = form.title.data

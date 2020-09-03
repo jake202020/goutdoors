@@ -14,11 +14,14 @@
         {% endif %}
         <hr>
     
-            <h5>Date of Visit:</h5>    
-            <p class="card-text">{{ journal.date }}</p>
+            <h5>Date of Park Visit:</h5>    
+            <p class="card-text">{{ journal.date_of_visit }}</p>
+            <h6>Date journal was added:</h6>
+            <p class="card-text">{{ journal.date_added }}</p>
+            <hr>
             <h5>Park Visited:</h5>
             <p class="card-text">{{ journal.park.name }}</p>
-            <hr>
+            
             <h5>Journal Notes:</h5>
             <p class="card-text mb-5">{{ journal.text }}</p>
 

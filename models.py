@@ -100,7 +100,10 @@ class Journal(db.Model):
                     primary_key=True,
                     autoincrement=True)
 
-    date = db.Column(db.DateTime,
+    date_added = db.Column(db.DateTime,
+                            nullable=False)
+
+    date_of_visit = db.Column(db.DateTime,
                         nullable=False)
 
     username = db.Column(db.String(30),

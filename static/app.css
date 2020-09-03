@@ -1,7 +1,7 @@
 body {
     min-height: 100vh;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto 1fr auto;
 }
 
 #nav-bottom {
@@ -10,7 +10,7 @@ body {
     background-size: cover;
     background-position: center;
     color: white;
-    margin-bottom: 10px;
+    margin-bottom: 50px;
 }
 
 img {
@@ -43,3 +43,14 @@ footer {
     color: white;
     text-align: center;
 }
+
+@media only screen and (max-width: 768px) {
+    #nav-bottom {
+        height: 50px;
+        background-image: url('/static/trees.jpg');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        margin-bottom: 10px;
+    }
+  }

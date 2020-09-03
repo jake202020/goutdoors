@@ -10,6 +10,7 @@ db.create_all()
 with open('national_parks_codes.csv') as parks:
     db.session.bulk_insert_mappings(Park, DictReader(parks))
 
+#Create admin user
 username = admin_user
 password = admin_pass
 email=admin_email
