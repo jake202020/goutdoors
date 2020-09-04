@@ -1,7 +1,7 @@
 from models import db, Park, Journal, User, Visit
 from csv import DictReader
 from app import app
-from key import admin_user, admin_pass, admin_email
+from secrets import admin_user, admin_pass, admin_email
 from datetime import datetime
 
 
