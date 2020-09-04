@@ -1,17 +1,22 @@
 """Capstone 1: National Parks Site and Journal"""
-from flask import Flask, render_template, request, redirect, session, flash
+from flask import Flask, render_template, request, redirect, session, flash, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 import requests
 from models import db, connect_db, User, Park, Journal, Visit
 from forms import SearchForm, RegistrationForm, LoginForm, NewJournalForm, EditJournalForm, EditUserForm
 from flask_bootstrap import Bootstrap
-from key import api_key, admin_user
+from flask_mail import Mail
 from datetime import datetime
 import os
 from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 Bootstrap(app)
+
+from tokens import generate_confirmation_token, confirm_token
+from secrets import MAIL_SERVER, MAIL_PORT, MAIL_USE_TLS, MAIL_USE_SSL, MAIL_USERNAME, MAIL_PASSWORD, MAIL_DEFAULT_SENDER
+
+from secrets import api_key, admin_user
 
 # we are using a postgres database and this is our database to connect to.
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", 'postgresql:///capstone_1_db')
@@ -21,11 +26,27 @@ app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "SECRET!")
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
+# mail settings
+app.config['MAIL_SERVER'] = MAIL_SERVER
+app.config['MAIL_PORT'] = MAIL_PORT
+app.config['MAIL_USE_TLS'] = MAIL_USE_TLS
+app.config['MAIL_USE_SSL'] = MAIL_USE_SSL
+
+# gmail authentication
+app.config['MAIL_USERNAME'] = MAIL_USERNAME
+app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
+
+# mail accounts
+app.config['MAIL_DEFAULT_SENDER'] = MAIL_DEFAULT_SENDER
+
 # from models.py
 connect_db(app)
 
 BASE_URL = "https://developer.nps.gov/api/v1"
 
+mail = Mail(app)
+
+from send import send_email
 
 
 ##############################################
@@ -75,7 +96,7 @@ def get_search_results(state):
 
         if visits:
             for visit in visits:
-                adjusted_date = visit.date_of_visit.strftime("%b %d, %Y")
+                adjusted_date = visit.date.strftime("%b %d, %Y")
                 visit.date = adjusted_date
 
             return render_template("results.html", parks_data=parks_data, state_code=state_code, visits=visits)
@@ -100,25 +121,63 @@ def register_form():
         email = form.email.data
         first_name = form.first_name.data
         last_name = form.last_name.data
+        confirmed=False,
         role = "user"
         
-        user = User.register(username, password, email, first_name, last_name, role)
+        user = User.register(username, password, email, first_name, last_name, confirmed, role)
         
         try:
             db.session.add(user)
             db.session.commit()
+
         except IntegrityError as e:
                 flash("Username taken")
                 return redirect("/register")
 
+
+        token = generate_confirmation_token(user.email)
+        confirm_url = url_for('confirm_email', token=token, _external=True)
+        html = render_template('activate.html', confirm_url=confirm_url)
+        subject = "Please confirm your email for GOutdoors"
+        send_email(user.email, subject, html)
+
+        flash('A confirmation email has been sent via email', 'success')
+            
         # add username to session for authorization
         session["username"] = user.username
 
-        flash("User successfully created")
         # on successful login, redirect to users page
         return redirect(f"/users/{ user.username }")
 
     return render_template("register.html", form=form)
+
+@app.route('/confirm/<token>')
+def confirm_email(token):
+    try:
+        email = confirm_token(token)
+    except:
+        flash('The confirmation link is invalid or expired.', 'danger')
+    
+    user = User.query.filter(User.username==session["username"]).first_or_404()
+    if user.confirmed:
+        flash('Account already confirmed. Please login.', 'success')
+    else:
+        user.confirmed = True
+        user.confirmed_on = datetime.now()
+        db.session.commit()
+        flash('You have confirmed your account. Thanks!', 'success')
+    return redirect('/')
+
+@app.route('/resend')
+def resend_confirmation():
+    user = User.query.filter(User.username==session["username"]).first_or_404()
+    token = generate_confirmation_token(user.email)
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    html = render_template('activate.html', confirm_url=confirm_url)
+    subject = "Please confirm your email for GOutdoors"
+    send_email(user.email, subject, html)
+    flash('A new confirmation email has been sent.', 'success')
+    return redirect("/")
 
 @app.route("/login", methods=["GET", "POST"])
 def login_form():
@@ -193,13 +252,11 @@ def edit_user(username):
         if session["username"] == username  or session["username"] == admin_user:
             user = User.query.get_or_404(username)
 
-            form = EditUserForm(email = user.email,
-                                first_name = user.first_name,
+            form = EditUserForm(first_name = user.first_name,
                                 last_name = user.last_name,
                                 state_code= user.state_code)
 
             if form.validate_on_submit():
-                user.email = form.email.data
                 user.first_name = form.first_name.data
                 user.last_name = form.last_name.data
                 user.state_code = form.state_code.data

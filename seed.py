@@ -2,6 +2,8 @@ from models import db, Park, Journal, User, Visit
 from csv import DictReader
 from app import app
 from key import admin_user, admin_pass, admin_email
+from datetime import datetime
+
 
 # create tables
 db.drop_all()
@@ -16,9 +18,10 @@ password = admin_pass
 email=admin_email
 first_name="admin"
 last_name="user"
+confirmed=True,
 role="admin"
 
-admin = User.register(username, password, email, first_name, last_name, role)
+admin = User.register(username, password, email, first_name, last_name, confirmed, role)
 
 db.session.add(admin)
 db.session.commit()
