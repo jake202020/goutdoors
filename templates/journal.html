@@ -5,7 +5,7 @@
 {% block content %}
 <h1>{{ journal.title }}</h1>
 
-        <div class="mb-2"><a href="/users/{{ user.username }}/journals/{{ journal.id }}/edit" type="button" class="badge badge-pill badge-warning ml-3">Edit</a></div>
+        <div class="mb-2"><a href="/users/{{ user.username }}/journals/{{ journal.id }}/edit" type="button" class="badge badge-pill badge-warning">Edit Journal</a></div>
 
         {% if journal.title_img_url %}
         <img src="{{ journal.title_img_url }}" alt="image">

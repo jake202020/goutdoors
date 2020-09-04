@@ -3,19 +3,19 @@
 {% block title %}User Dashboard{% endblock %}
 
 {% block content %}
-<a href="/users/{{ user.username }}/edit" type="button" class="badge badge-pill badge-warning ml-3">Edit User</a>
+<a href="/users/{{ user.username }}/edit" type="button" class="badge badge-pill badge-warning">Edit User</a>
 
 <h1>{{ user.username }}'s Dashboard </h1>
 {% if user.state_code %}
 <a href="/results/{{ user.state_code }}"  type="button" class="btn btn-info">Parks Near Me</a>
 {% endif %}
 
-<a href="/users/{{ user.username }}/journals/new"  type="button" class="btn btn-success">Add Journal Entry</a>
+<a href="/users/{{ user.username }}/journals/new"  type="button" class="btn btn-success mt-3">Add Journal Entry</a>
 
     {% for journal in journals %}
     <div class="card my-5">
         {% if journal.title_img_url %}
-        <img class="card-img-top" src="{{ journal.title_img_url }}" alt="Card image cap">
+        <a href="/users/{{ user.username }}/journals/{{ journal.id }}"><img class="card-img-top" src="{{ journal.title_img_url }}" alt="Card image cap"></a>
         {% else %}
         <img class="card-img-top" src="/static/park.jpg" alt="Card image cap">
         {% endif %}

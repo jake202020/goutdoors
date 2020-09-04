@@ -73,18 +73,24 @@
 		{% endfor %}
 
 
-		<h3>Search National Parks</h3>
-<p>Search for national parks by state</p>
-	<form method="POST">
-		{{ form.csrf_token() }}
-        <div class="form-group col-sm-1 pl-0">
-                {{ wtf.form_field(form.state, class='form-control')}}
-        </div>
-		
-		<button type="submit" class="btn btn-primary mb-2">Search</button>
-	</form>
-<hr>
-<h3>GOutdoors Journaling</h3>
+    <div class="container">
+        <div class="row">
+            <div class="col"> 
+            <h3>Search National Parks</h3>
+            <hr>
+            <p>Search for national parks by state</p>
+                <form method="POST">
+                    {{ form.csrf_token() }}
+                    <div class="form-group col-2 pl-0">
+                            {{ wtf.form_field(form.state, class='form-control')}}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary mb-2">Search</button>
+                </form>
+            </div>
+            <div class="col"> 
+                <h3>GOutdoors Journaling</h3>
+                <hr>
 <p>Create an account today and use GOutdoors to keep track of your most precious travel moments</p>
 <p>Include in your journaling:</p>
 <ul>
@@ -92,12 +98,20 @@
     <li>1 picture for each journal entry (capacity for additional images coming soon)</li>
 	<li>An easy way to present your travels to family and friends</li>
 </ul>
+<div class="text-center">
 {% if session["username"] %}
 <a href="/users/{{ session['username'] }}" class="btn btn-primary" role="button">Go to Journals</a>
 {% else %}
 <a href="/register" class="btn btn-primary" role="button">Register Today</a>
 {% endif %}
+</div>
 	</div>
+                </div>
+        </div>
+    </div>
+</div>
+    
+
     <footer>
         <p>All National Parks data recalled and maintained by National Parks Service API: https://www.nps.gov/subjects/developer/index.htm</p>
         <p>© GOutdoors 2020</p>
