@@ -63,7 +63,8 @@
 <div class="jumbotron jumbotron-fluid">
 	<div class="container jumbotron-text py-4">
 	  <h1 class="display-4">Welcome to GOutdoors</h1>
-	  <p class="lead">Your Destination For National Park Information and Travel Journaling</p>
+      <p class="lead">Your Destination For National Park Information and Travel Journaling</p>
+      <a class="btn btn-info btn-lg" href="/about" role="button">Learn More</a>
 	</div>
   </div>
 
@@ -74,35 +75,35 @@
 
 
     <div class="container">
-        <div class="row">
-            <div class="col"> 
+        <div class="row display-flex">
+            <div class="col-12 col-lg-6"> 
             <h3>Search National Parks</h3>
             <hr>
             <p>Search for national parks by state</p>
                 <form method="POST">
                     {{ form.csrf_token() }}
-                    <div class="form-group col-2 pl-0">
+                    <div class="form-group col-3 pl-0">
                             {{ wtf.form_field(form.state, class='form-control')}}
                     </div>
                     
                     <button type="submit" class="btn btn-primary mb-2">Search</button>
                 </form>
             </div>
-            <div class="col"> 
+            <div class="col-12 col-lg-6"> 
                 <h3>GOutdoors Journaling</h3>
                 <hr>
 <p>Create an account today and use GOutdoors to keep track of your most precious travel moments</p>
-<p>Include in your journaling:</p>
-<ul>
-    <li>Notes from your travels, organized by day of the trip</li>
-    <li>1 picture for each journal entry (capacity for additional images coming soon)</li>
-	<li>An easy way to present your travels to family and friends</li>
+<h5>Include in your journaling:</h5>
+<ul class="list-group list-group-flush">
+    <li class="list-group-item">Notes from your travels, organized by day of the trip</li>
+    <li class="list-group-item">1 picture for each journal entry (capacity for additional images coming soon)</li>
+	<li class="list-group-item">An easy way to present your travels to family and friends</li>
 </ul>
 <div class="text-center">
 {% if session["username"] %}
-<a href="/users/{{ session['username'] }}" class="btn btn-primary" role="button">Go to Journals</a>
+<a href="/users/{{ session['username'] }}" class="btn btn-primary mr-2" role="button">Go to Journals</a>
 {% else %}
-<a href="/register" class="btn btn-primary" role="button">Register Today</a>
+<a href="/register" class="btn btn-primary mr-2" role="button">Register Today</a>
 {% endif %}
 </div>
 	</div>

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, DateField
-from wtforms.fields.html5 import EmailField
+from wtforms import StringField, PasswordField, SelectField
+from wtforms.fields.html5 import EmailField, DateField
 from wtforms.widgets import TextArea
 from datetime import date
 from wtforms.validators import InputRequired, Email
@@ -37,7 +37,7 @@ class LoginForm(FlaskForm):
 class NewJournalForm(FlaskForm):
     """New journal entry form"""
     
-    date = DateField("Date of Visit (Y-M-D)", default=date.today)
+    date = DateField("Date of Visit", default=date.today)
     title = StringField("Journal Title", validators=[InputRequired()])
     text = StringField("Journal Content", validators=[InputRequired()], widget=TextArea())
     park_name = SelectField("Park Name", validators=[InputRequired()])
@@ -46,7 +46,7 @@ class NewJournalForm(FlaskForm):
 class EditJournalForm(FlaskForm):
     """Edit journal entry form"""
     
-    date = DateField("Date of Visit (Y-M-D)")
+    date = DateField("Date of Visit")
     title = StringField("Title", validators=[InputRequired()])
     text = StringField("Content", validators=[InputRequired()], widget=TextArea())
     title_img_url = StringField("Title Image URL")
