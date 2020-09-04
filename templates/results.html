@@ -18,7 +18,7 @@
         <div class="card-body">
             <h5 class="card-title">{{ park.fullName }}</a></h5>
             {% if park.visit_count > 0 %}
-                <h6>Has been visited {{ park.visit_count }} time(s).</h6>
+                <h6><b>Has been visited {{ park.visit_count }} time(s).</b></h6>
             {% endif %}
             {% if visits %}
                 {% for visit in visits %}
