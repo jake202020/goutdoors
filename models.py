@@ -109,7 +109,8 @@ class Journal(db.Model):
                             nullable=False)
 
     date_of_visit = db.Column(db.DateTime,
-                        nullable=False)
+                        nullable=False,
+                        unique=False)
 
     username = db.Column(db.String(30),
                         db.ForeignKey('users.username'),
@@ -139,7 +140,7 @@ class Visit(db.Model):
                     autoincrement=True)
 
     date_of_visit = db.Column(db.DateTime,
-                        db.ForeignKey('journals.date_of_visit'))
+                        nullable=False)
 
     username = db.Column(db.String(30),
                         db.ForeignKey('users.username'),
@@ -150,7 +151,8 @@ class Visit(db.Model):
                             nullable=False)
 
     journal_id = db.Column(db.Integer,
-                            db.ForeignKey('journals.id'))
+                            db.ForeignKey('journals.id'),
+                            nullable=True)
 
 def connect_db(app):
     """Connect this database to provided Flask app.

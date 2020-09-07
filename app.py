@@ -98,7 +98,7 @@ def get_search_results(state):
 
         if visits:
             for visit in visits:
-                adjusted_date = visit.date.strftime("%b %d, %Y")
+                adjusted_date = visit.date_of_visit.strftime("%b %d, %Y")
                 visit.date = adjusted_date
 
             return render_template("results.html", parks_data=parks_data, state_code=state_code, visits=visits, user=user)
