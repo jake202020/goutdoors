@@ -367,7 +367,7 @@ def new_journal_from_search(username, park_code):
 
             # Get park_code and name from db table for select field in form
             park = Park.query.get_or_404(park_code)
-            form.park_name.choices = [(park_code, park.name)]
+            form.park_name.choices = [(park_code, park.park_name)]
 
             user = User.query.get_or_404(username)
 
@@ -391,7 +391,7 @@ def new_journal_from_search(username, park_code):
                 db.session.add(journal)
                 db.session.commit()
 
-                visit = Visit(date=date_of_visit,username=username, park_code=park_code, journal_id=journal.id)
+                visit = Visit(date_of_visit=date_of_visit,username=username, park_code=park_code, journal_id=journal.id)
                 db.session.add(visit)
                 db.session.commit()
 
@@ -452,8 +452,8 @@ def edit_journal(username, journal_id):
                                 title_img_url=journal.title_img_url)
 
             if form.validate_on_submit():                
-                journal.date_of_visit = form.date.data
-                visit.date = form.date.data
+                journal.date_of_visit = form.date_of_visit.data
+                visit.date_of_visit = form.date_of_visit.data
                 journal.username = user.username
                 journal.title = form.title.data
                 journal.text = form.text.data

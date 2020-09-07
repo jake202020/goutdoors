@@ -50,12 +50,13 @@ class User(db.Model):
         # Turn bytestring into unicode utf8 string
         hashed_utf8 = hashed.decode("utf8")
 
-        # Return instance of user with details and hased pwd
+        # Return instance of user with details and hashed pwd
         return cls(username=username,
                     password=hashed_utf8,
                     email=email,
                     first_name=first_name,
                     last_name=last_name,
+                    confirmed=confirmed,
                     role=role)
 
     # authentication method
@@ -82,7 +83,7 @@ class Park(db.Model):
                             primary_key=True,
                             nullable=False)
 
-    name = db.Column(db.String,
+    park_name = db.Column(db.String,
                     nullable=False)
 
     state_code = db.Column(db.String(2),
@@ -137,8 +138,8 @@ class Visit(db.Model):
                     primary_key=True,
                     autoincrement=True)
 
-    date = db.Column(db.DateTime,
-                        nullable=False)
+    date_of_visit = db.Column(db.DateTime,
+                        db.ForeignKey('journals.date_of_visit'))
 
     username = db.Column(db.String(30),
                         db.ForeignKey('users.username'),
