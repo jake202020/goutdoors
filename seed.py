@@ -23,7 +23,7 @@ password = admin_pass
 email=admin_email
 first_name="admin"
 last_name="user"
-confirmed=True,
+confirmed=True
 role="admin"
 
 admin = User.register(username, password, email, first_name, last_name, confirmed, role)

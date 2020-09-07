@@ -123,7 +123,7 @@ def register_form():
         email = form.email.data
         first_name = form.first_name.data
         last_name = form.last_name.data
-        confirmed=False,
+        confirmed=False
         role = "user"
         
         user = User.register(username, password, email, first_name, last_name, confirmed, role)
@@ -318,7 +318,7 @@ def new_journal(username):
             form = NewJournalForm()
 
             # Get park_code and name from db table for select field in form
-            form.park_name.choices = [(p.park_code, p.name) for p in Park.query.order_by('name')]
+            form.park_name.choices = [(p.park_code, p.park_name) for p in Park.query.order_by('park_name')]
 
             user = User.query.get_or_404(username)
 
