@@ -1,15 +1,17 @@
+<!-- Template for results from a state search -->
+
 <table>
     {% for park in parks %}
-    <tr>
-        <td>
-            {% if park.addresses == [] %}
-            <p>NA</p>
-            {% else %}
-            {{ park.addresses[0].stateCode }}
-            {% endif %}
-        </td>
-        <td>{{ park.parkCode }}</td>
-        <td>{{ park.fullName }}</td>
-    </tr>
+        <tr>
+            <td>
+                {% if park.addresses == [] %}
+                    <p>NA</p>
+                {% else %}
+                    {{ park.addresses[0].stateCode }}
+                {% endif %}
+            </td>
+            <td>{{ park.parkCode }}</td>
+            <td>{{ park.fullName }}</td>
+        </tr>
     {% endfor %}
 </table>

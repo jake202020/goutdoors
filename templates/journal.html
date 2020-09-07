@@ -1,34 +1,41 @@
+<!-- Template for individual journal -->
+
 {% extends "base.html" %}
 
 {% block title %}User Journal{% endblock %}
 
 {% block content %}
+
 <h1>{{ journal.title }}</h1>
 
         <div class="mb-2"><a href="/users/{{ user.username }}/journals/{{ journal.id }}/edit" type="button" class="badge badge-pill badge-warning">Edit Journal</a></div>
 
         {% if journal.title_img_url %}
-        <img src="{{ journal.title_img_url }}" alt="image">
+            <img src="{{ journal.title_img_url }}" alt="image">
         {% else %}
-        <img src="/static/park.jpg" alt="image">
+            <img src="/static/park.jpg" alt="image">
         {% endif %}
+
         <hr>
     
-            <h5>Date of Park Visit:</h5>    
-            <p class="card-text">{{ journal.date_of_visit }}</p>
-            <h6>Date journal was added:</h6>
-            <p class="card-text">{{ journal.date_added }}</p>
-            <hr>
-            <h5>Park Visited:</h5>
-            <p class="card-text">{{ journal.park.name }}</p>
+        <h5>Date of Park Visit:</h5>    
+        <p class="card-text">{{ journal.date_of_visit }}</p>
+        
+        <h6>Date journal was added:</h6>
+        <p class="card-text">{{ journal.date_added }}</p>
+        
+        <hr>
+        
+        <h5>Park Visited:</h5>
+        <p class="card-text">{{ journal.park.name }}</p>
             
-            <h5>Journal Notes:</h5>
-            <p class="card-text mb-5">{{ journal.text }}</p>
+        <h5>Journal Notes:</h5>
+        <p class="card-text mb-5">{{ journal.text }}</p>
 
-            <div class="row">
-                <div class="col text-center">
-                    <a href="/users/{{ user.username }}"  type="button" class="btn btn-success">Back to Journals</a>
-                </div>
+        <div class="row">
+            <div class="col text-center">
+                <a href="/users/{{ user.username }}"  type="button" class="btn btn-success">Back to Journals</a>
             </div>
+        </div>
 
 {% endblock %}
