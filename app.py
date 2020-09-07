@@ -92,6 +92,8 @@ def get_search_results(state):
         return render_template("results.html", parks_data=parks_data, state_code=state_code)
 
     else:
+        username = session["username"]
+        user = user = User.query.get_or_404(username)
         visits = Visit.query.filter(Visit.username == session["username"]).all()
 
         if visits:
@@ -99,10 +101,10 @@ def get_search_results(state):
                 adjusted_date = visit.date.strftime("%b %d, %Y")
                 visit.date = adjusted_date
 
-            return render_template("results.html", parks_data=parks_data, state_code=state_code, visits=visits)
+            return render_template("results.html", parks_data=parks_data, state_code=state_code, visits=visits, user=user)
 
 
-        return render_template("results.html", parks_data=parks_data, state_code=state_code)
+        return render_template("results.html", parks_data=parks_data, state_code=state_code, user=user)
     
 
 @app.route("/register", methods=["GET", "POST"])
