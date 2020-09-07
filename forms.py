@@ -48,7 +48,7 @@ class NewJournalForm(FlaskForm):
 class EditJournalForm(FlaskForm):
     """Edit journal entry form"""
     
-    date = DateField("Date of Visit")
+    date_of_visit = DateField("Date of Visit")
     title = StringField("Title", validators=[InputRequired()])
     text = StringField("Content", validators=[InputRequired()], widget=TextArea())
     title_img_url = StringField("Title Image URL")

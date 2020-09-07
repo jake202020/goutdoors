@@ -324,7 +324,7 @@ def new_journal(username):
 
             if form.validate_on_submit():
                 date_added = datetime.now()
-                date_of_visit = form.date.data
+                date_of_visit = form.date_of_visit.data
                 username = user.username
                 title = form.title.data
                 text = form.text.data
@@ -342,7 +342,7 @@ def new_journal(username):
                 db.session.add(journal)
                 db.session.commit()
 
-                visit = Visit(date=date_of_visit,username=username, park_code=park_code, journal_id=journal.id)
+                visit = Visit(date_of_visit=date_of_visit,username=username, park_code=park_code, journal_id=journal.id)
                 db.session.add(visit)
                 db.session.commit()
 
