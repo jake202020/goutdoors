@@ -13,11 +13,6 @@ body {
     margin-bottom: 50px;
 }
 
-img {
-    height: 250px;
-    width: 250px;
-}
-
 .jumbotron {
     background-image: url('/static/travel_map.jpg');
     background-size: cover;
@@ -31,6 +26,8 @@ img {
 }
 
 img {
+    height: 250px;
+    width: 250px;
     object-fit: cover;
 }
 
