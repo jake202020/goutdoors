@@ -1,3 +1,5 @@
+"""Create/confirm token for user email confirmation"""
+
 from itsdangerous import URLSafeTimedSerializer
 from secrets import SECURITY_PASSWORD_SALT, SECRET_KEY
 

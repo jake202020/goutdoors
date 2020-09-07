@@ -41,6 +41,7 @@ footer {
     text-align: center;
 }
 
+/* Make the tree img smaller on mobile and tablet */
 @media only screen and (max-width: 768px) {
     #nav-bottom {
         height: 50px;

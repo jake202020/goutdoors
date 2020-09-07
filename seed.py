@@ -1,3 +1,8 @@
+"""DB setup for GOutdoors
+
+Seed national park table
+Seed admin user"""
+
 from models import db, Park, Journal, User, Visit
 from csv import DictReader
 from app import app

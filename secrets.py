@@ -1,3 +1,5 @@
+"""Keys/secret values for GOutdoors"""
+
 api_key = "vG3tRs4GwEF0x8qK9FmVp5h8AhZjbkH13FydMyTc"
 
 admin_user = "admin_for_go_outdoors_2020"
