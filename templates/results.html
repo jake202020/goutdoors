@@ -29,7 +29,7 @@
                     {% if visits %}
                         {% for visit in visits %}
                             {% if visit.park_code == park.parkCode %}
-                                <p class="card-text"><a href="/users/{{ session['username'] }}/journals/{{ visit.journal_id }}">
+                                <p class="card-text"><a href="/users/{{ current_user.id }}/journals/{{ visit.journal_id }}">
                                     You visited this park on: {{ visit.date }}.</a></p>
                             {% endif %}
                         {% endfor %}
@@ -49,10 +49,10 @@
                         <a href="{{ park.url }}" class="btn btn-info" target="blank">NPS Website for More Info</a>
                     </div>
 
-                    {% if session['username'] %}
+                    {% if current_user.is_authenticated %}
                         {% if user.confirmed == True %}
                             <div class="mt-3 text-center">
-                                <a href="/users/{{ session['username'] }}/journals/{{ park.parkCode }}/new" class="btn btn-success">Add Journal for this Park</a>
+                                <a href="/users/{{ current_user.username }}/journals/{{ park.parkCode }}/new" class="btn btn-success">Add Journal for this Park</a>
                             </div>
                         {% endif %}
                     {% endif %}

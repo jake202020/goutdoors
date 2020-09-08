@@ -2,17 +2,21 @@
 
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     """User Model"""
 
     __tablename__ = "users"
 
+    id = db.Column(db.Integer,
+                    primary_key=True,
+                    autoincrement=True)
+
     username = db.Column(db.String(30),
-                        primary_key=True,
                         nullable=False,
                         unique=True)
     
@@ -115,8 +119,8 @@ class Journal(db.Model):
                         nullable=False,
                         unique=False)
 
-    username = db.Column(db.String(30),
-                        db.ForeignKey('users.username'),
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey('users.id'),
                         nullable=False)
     
     title = db.Column(db.Text,
@@ -145,8 +149,7 @@ class Visit(db.Model):
     date_of_visit = db.Column(db.DateTime,
                         nullable=False)
 
-    username = db.Column(db.String(30),
-                        db.ForeignKey('users.username'),
+    user_id = db.Column(db.ForeignKey('users.id'),
                         nullable=False)
 
     park_code = db.Column(db.String(4),

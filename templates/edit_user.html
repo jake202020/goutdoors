@@ -7,7 +7,7 @@
 
 {% block content %}
 
-<h1>Edit {{ user.username }}'s Profile</h1>
+<h1>Edit {{ current_user.username }}'s Profile</h1>
 <form method="POST" class="mb-5">
     {{ form.csrf_token() }}
         <div class="row">
@@ -23,7 +23,7 @@
         </div>
 
         <button type="submit" class="btn btn-info">Save Edits</button>
-        <a href="/users/{{ session['username'] }}" class="btn btn-warning" type="button">Cancel</a>
+        <a href="/users/{{ current_user.username }}" class="btn btn-warning" type="button">Cancel</a>
 </form>
 
 <!-- Button trigger modal -->
@@ -34,7 +34,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Delete {{ user.username }}'s Account</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Delete {{ current_user.username }}'s Account</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -46,7 +46,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <form method="POST" action="/users/{{ session['username'] }}/delete">
+          <form method="POST" action="/users/{{ current_user.username }}/delete">
             <button type="submit" class="btn btn-danger">Delete User</button>
         </form>
         </div>

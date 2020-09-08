@@ -20,7 +20,7 @@
 
 <hr>
 
-{% if session['username'] %}
+{% if current_user.is_authenticated %}
     <h3>Future Features:</h3>
     <p>GOutdoors is always looking for the next way to best serve users. Here is a shortlist of 
         major updates currently being worked on:</p>
@@ -54,8 +54,8 @@
 
 
 <div class="text-center pt-5">
-    {% if session["username"] %}
-        <a href="/users/{{ session['username'] }}" class="btn btn-primary mr-2" role="button">Go to Journals</a>
+    {% if current_user.is_authenticated %}
+        <a href="/users/{{ current_user.username }}" class="btn btn-primary mr-2" role="button">Go to Journals</a>
     {% else %}
         <a href="/register" class="btn btn-primary mr-2" role="button">Register Today</a>
     {% endif %}

@@ -26,7 +26,7 @@
         </div>
         
         <button type="submit" class="btn btn-info">Save Edits</button>
-        <a href="/users/{{ session['username'] }}" class="btn btn-warning" type="button">Cancel</a>
+        <a href="/users/{{ current_user.username }}" class="btn btn-warning" type="button">Cancel</a>
 </form>
 
 <!-- Button trigger modal -->
@@ -49,7 +49,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <form method="POST" action="/users/{{ session['username'] }}/journals/{{ journal.id }}/delete">
+        <form method="POST" action="/users/{{ current_user.username }}/journals/{{ journal.id }}/delete">
           <button type="submit" class="btn btn-danger">Delete Journal</button>
       </form>
       </div>

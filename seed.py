@@ -25,8 +25,9 @@ first_name="admin"
 last_name="user"
 confirmed=True
 role="admin"
+created_at=datetime.now()
 
-admin = User.register(username, password, email, first_name, last_name, confirmed, role)
+admin = User.register(username, password, email, first_name, last_name, confirmed, role, created_at)
 
 db.session.add(admin)
 db.session.commit()
