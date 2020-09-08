@@ -31,8 +31,8 @@
             {% endif %}
             <div class="card-body">
                 <h5 class="card-title"><a href="/users/{{ user.username }}/journals/{{ journal.id }}">{{ journal.title }}</a></h5>
-                <p class="card-text">Date of Visit: {{ journal.date }}</p>
-                <p class="card-text">Park Visited: {{ journal.park.name }}</p>
+                <p class="card-text">Date of Visit: {{ journal.date_of_visit }}</p>
+                <p class="card-text">Park Visited: {{ journal.park.park_name }}</p>
                 <p class="card-text">Journal Preview: {{ journal.text|truncate(25) }}</p>
             </div>
         </div>

@@ -99,7 +99,7 @@ def get_search_results(state):
         if visits:
             for visit in visits:
                 adjusted_date = visit.date_of_visit.strftime("%b %d, %Y")
-                visit.date = adjusted_date
+                visit.date_of_visit = adjusted_date
 
             return render_template("results.html", parks_data=parks_data, state_code=state_code, visits=visits, user=user)
 
@@ -125,8 +125,9 @@ def register_form():
         last_name = form.last_name.data
         confirmed=False
         role = "user"
+        created_at = datetime.now()
         
-        user = User.register(username, password, email, first_name, last_name, confirmed, role)
+        user = User.register(username, password, email, first_name, last_name, confirmed, role, created_at)
         
         try:
             db.session.add(user)
@@ -235,7 +236,7 @@ def user_page(username):
 
             for journal in journals:
                 adjusted_date = journal.date_of_visit.strftime("%b %d, %Y")
-                journal.date = adjusted_date
+                journal.date_of_visit = adjusted_date
 
             return render_template("user_dashboard.html", user=user, journals=journals)
 
@@ -373,7 +374,7 @@ def new_journal_from_search(username, park_code):
 
             if form.validate_on_submit():
                 date_added = datetime.now()
-                date_of_visit = form.date.data
+                date_of_visit = form.date_of_visit.data
                 username = user.username
                 title = form.title.data
                 text = form.text.data
@@ -445,7 +446,7 @@ def edit_journal(username, journal_id):
             visit = Visit.query.get_or_404(journal_id)
             user = User.query.get_or_404(username)
 
-            form = EditJournalForm(date=journal.date_of_visit,
+            form = EditJournalForm(date_of_visit=journal.date_of_visit,
                                 username=journal.username,
                                 title=journal.title, 
                                 text=journal.text, 

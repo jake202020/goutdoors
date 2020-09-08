@@ -37,13 +37,15 @@ class User(db.Model):
 
     state_code = db.Column(db.String(2))
 
+    created_at = db.Column(db.DateTime)
+
     journal = db.relationship("Journal", backref="user", cascade="all,delete")
 
     visit = db.relationship("Visit", backref="user", cascade="all,delete")
 
     # registration method
     @classmethod
-    def register(cls, username, pwd, email, first_name, last_name, confirmed, role):
+    def register(cls, username, pwd, email, first_name, last_name, confirmed, role, created_at):
         """Register user with hashed password and return user"""
 
         hashed = bcrypt.generate_password_hash(pwd)
@@ -57,7 +59,8 @@ class User(db.Model):
                     first_name=first_name,
                     last_name=last_name,
                     confirmed=confirmed,
-                    role=role)
+                    role=role,
+                    created_at=created_at)
 
     # authentication method
     @classmethod
