@@ -58,64 +58,6 @@ from send import send_email
 BASE_URL = "https://developer.nps.gov/api/v1"
 
 ##############################################
-############## General Routes ################
-##############################################
-
-@app.route("/", methods=["GET", "POST"])
-def show_home():
-    """Homepage to show search form, park spotlight, and journaling overview (GET) or get search term and redirect to results page (POST)"""
-
-    form = SearchForm()
-
-    if form.validate_on_submit():
-        state = form.state.data
-
-        return redirect(f"results/{ state }")
-
-    return render_template("index.html", form=form)
-
-@app.route("/about")
-def show_about():
-    """Show about page for site"""
-
-    return render_template("about.html")
-
-@app.route("/results/<state>")
-def get_search_results(state):
-    """Use search term and call API to show results"""
-
-    state_code = state
-
-    parks = requests.get(f"{ BASE_URL }/parks?stateCode={ state_code }&api_key={ api_key }")
-    parks_json = parks.json()
-    parks_data = parks_json["data"]
-
-    for park in parks_data:
-        visit_count = Visit.query.filter(Visit.park_code == park["parkCode"]).count()
-        park["visit_count"] = visit_count
-
-        db.session.commit()
-
-    if current_user.is_authenticated:
-        user_id = current_user.id
-        user = User.query.get_or_404(user_id)
-        visits = Visit.query.filter(Visit.id == user_id).all()
-
-        if visits:
-            for visit in visits:
-                adjusted_date = visit.date_of_visit.strftime("%b %d, %Y")
-                visit.date_of_visit = adjusted_date
-
-            return render_template("results.html", parks_data=parks_data, state_code=state_code, visits=visits, user=user)
-
-
-        return render_template("results.html", parks_data=parks_data, state_code=state_code, user=user)
-
-    else:
-        return render_template("results.html", parks_data=parks_data, state_code=state_code)
-
-    
-##############################################
 ############## Signup, Login, Logout #########
 ##############################################
 
@@ -222,6 +164,63 @@ def login_form():
             form.username.errors = ["Bad username and/or password"]
 
     return render_template("login.html", form=form)
+
+##############################################
+############## General Routes ################
+##############################################
+
+@app.route("/", methods=["GET", "POST"])
+def show_home():
+    """Homepage to show search form, park spotlight, and journaling overview (GET) or get search term and redirect to results page (POST)"""
+
+    form = SearchForm()
+
+    if form.validate_on_submit():
+        state = form.state.data
+
+        return redirect(f"results/{ state }")
+
+    return render_template("index.html", form=form)
+
+@app.route("/about")
+def show_about():
+    """Show about page for site"""
+
+    return render_template("about.html")
+
+@app.route("/results/<state>")
+def get_search_results(state):
+    """Use search term and call API to show results"""
+
+    state_code = state
+
+    parks = requests.get(f"{ BASE_URL }/parks?stateCode={ state_code }&api_key={ api_key }")
+    parks_json = parks.json()
+    parks_data = parks_json["data"]
+
+    for park in parks_data:
+        visit_count = Visit.query.filter(Visit.park_code == park["parkCode"]).count()
+        park["visit_count"] = visit_count
+
+        db.session.commit()
+
+    if current_user.is_authenticated:
+        user_id = current_user.id
+        user = User.query.get_or_404(user_id)
+        visits = Visit.query.filter(Visit.user_id == user_id).all()
+
+        if visits:
+            for visit in visits:
+                adjusted_date = visit.date_of_visit.strftime("%b %d, %Y")
+                visit.date_of_visit = adjusted_date
+
+            return render_template("results.html", parks_data=parks_data, state_code=state_code, visits=visits, user=user)
+
+
+        return render_template("results.html", parks_data=parks_data, state_code=state_code, user=user)
+
+    else:
+        return render_template("results.html", parks_data=parks_data, state_code=state_code)
 
 
 ##############################################

@@ -29,8 +29,8 @@
                     {% if visits %}
                         {% for visit in visits %}
                             {% if visit.park_code == park.parkCode %}
-                                <p class="card-text"><a href="/users/{{ current_user.id }}/journals/{{ visit.journal_id }}">
-                                    You visited this park on: {{ visit.date }}.</a></p>
+                                <p class="card-text"><a href="/users/{{ user.username }}/journals/{{ visit.journal_id }}">
+                                    You visited this park on: {{ visit.date_of_visit }}.</a></p>
                             {% endif %}
                         {% endfor %}
                     {% endif %}
