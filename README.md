@@ -23,7 +23,7 @@ Running GOutdoors includes creating an NPS API key  (free with minimal user info
     - admin_pass = "*admin_password*"
     - admin_email = "*admin_email_address*"
     - SECRET_KEY = "*secret_key*"
-    - SECURITY_PASSWORD_SALT = "$%^F45F"
+    - SECURITY_PASSWORD_SALT = "*password_salt*"
     - **mail settings**
         - MAIL_SERVER = "*email_server*"
         - MAIL_PORT = *port_#*
